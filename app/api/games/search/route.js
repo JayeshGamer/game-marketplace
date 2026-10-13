@@ -13,7 +13,7 @@ export async function GET(req) {
         const accessToken = await getIgdbAccessToken();
 
         const gamesQuery = `
-            fields name, cover.image_id, first_release_date, total_rating;
+            fields id, name, cover.image_id, first_release_date, total_rating;
             search "${queryTerm}";
             limit 20;
         `;

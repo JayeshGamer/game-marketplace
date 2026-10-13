@@ -10,7 +10,7 @@ export async function POST(req) {
         // Query for popular games or specific criteria
         // Example: Fetch top 10 games with ratings higher than 80
         const gamesQuery = `
-            fields name, summary, storyline, first_release_date, total_rating, 
+            fields id, name, summary, storyline, first_release_date, total_rating, 
             cover.image_id, screenshots.image_id, videos.video_id, 
             genres.name, involved_companies.company.name, involved_companies.developer,
             platforms.name, themes.name, game_modes.name;
@@ -29,6 +29,10 @@ export async function POST(req) {
 
         for (const igdbGame of igdbGames) {
             try {
+                if (!igdbGame?.id) {
+                    throw new Error("Missing IGDB game id");
+                }
+
                 const gameId = `igdb-${igdbGame.id}`;
                 const gameRef = doc(db, "games", gameId);
 
@@ -37,8 +41,8 @@ export async function POST(req) {
                     title: igdbGame.name,
                     description: igdbGame.summary || igdbGame.storyline || "No description available.",
                     price: 59.99, // Static price for now, as IGDB doesn't provide pricing
-                    developer: igdbGame.involved_companies?.find(c => c.developer)?.company.name || "Unknown Developer",
-                    publisher: igdbGame.involved_companies?.find(c => !c.developer)?.company.name || "Unknown Publisher",
+                    developer: igdbGame.involved_companies?.find(c => c?.developer)?.company?.name || "Unknown Developer",
+                    publisher: igdbGame.involved_companies?.find(c => c && c.developer === false)?.company?.name || "Unknown Publisher",
                     releaseDate: igdbGame.first_release_date
                         ? new Date(igdbGame.first_release_date * 1000).toLocaleDateString()
                         : "TBA",

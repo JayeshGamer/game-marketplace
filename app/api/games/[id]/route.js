@@ -8,26 +8,41 @@ export async function GET(req, { params }) {
         const { id } = await params;
         const { searchParams } = new URL(req.url);
         const forceBust = searchParams.get("bust") === "true";
+        let cachedData = null;
+        let gameRef = null;
 
         // 1. Check Firestore Cache First
-        const gameRef = doc(db, "games", id);
-        const gameSnap = await getDoc(gameRef);
+        try {
+            gameRef = doc(db, "games", id);
+            const gameSnap = await getDoc(gameRef);
 
-        if (gameSnap.exists() && !forceBust) {
-            const data = gameSnap.data();
-            const lastUpdated = data.lastUpdated || 0;
-            const now = Date.now();
-            const staleTime = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-            // If found and not stale, return it
-            if (now - lastUpdated < staleTime) {
-                console.log(`[Cache Hit] Returning game data for: ${id}`);
-                return NextResponse.json({ success: true, data });
+            if (gameSnap.exists()) {
+                cachedData = gameSnap.data();
             }
-            console.log(`[Cache Stale] Refreshing game data for: ${id}`);
-        } else if (!gameSnap.exists()) {
+
+            if (cachedData && !forceBust) {
+                const lastUpdated = cachedData.lastUpdated || 0;
+                const now = Date.now();
+                const staleTime = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+                // If found and not stale, return it
+                if (now - lastUpdated < staleTime) {
+                    console.log(`[Cache Hit] Returning game data for: ${id}`);
+                    return NextResponse.json({ success: true, data: cachedData });
+                }
+                console.log(`[Cache Stale] Refreshing game data for: ${id}`);
+            }
+
+            if (!cachedData) {
+                console.log(`[Cache Miss] Fetching fresh data from IGDB for: ${id}`);
+            }
+        } catch (cacheError) {
+            console.warn(`[Cache Error] Continuing without cache for ${id}:`, cacheError.message);
+        }
+
+        if (!cachedData) {
             console.log(`[Cache Miss] Fetching fresh data from IGDB for: ${id}`);
-        } else {
+        } else if (forceBust) {
             console.log(`[Cache Bust] Force-refreshing game data for: ${id}`);
         }
 
@@ -38,7 +53,7 @@ export async function GET(req, { params }) {
         const numericId = id.startsWith('igdb-') ? id.replace('igdb-', '') : id;
 
         const gamesQuery = `
-            fields name, summary, storyline, first_release_date, total_rating, 
+            fields id, name, summary, storyline, first_release_date, total_rating, 
             cover.image_id, screenshots.image_id, videos.video_id, 
             genres.name, involved_companies.company.name, involved_companies.developer,
             platforms.name, themes.name, game_modes.name;
@@ -58,8 +73,8 @@ export async function GET(req, { params }) {
             title: igdbGame.name,
             description: igdbGame.summary || igdbGame.storyline || "No description available.",
             price: 59.99,
-            developer: igdbGame.involved_companies?.find(c => c.developer)?.company.name || "Unknown Developer",
-            publisher: igdbGame.involved_companies?.find(c => !c.developer)?.company.name || "Unknown Publisher",
+            developer: igdbGame.involved_companies?.find(c => c?.developer)?.company?.name || "Unknown Developer",
+            publisher: igdbGame.involved_companies?.find(c => c && c.developer === false)?.company?.name || "Unknown Publisher",
             releaseDate: igdbGame.first_release_date
                 ? new Date(igdbGame.first_release_date * 1000).toLocaleDateString()
                 : "TBA",
@@ -82,7 +97,13 @@ export async function GET(req, { params }) {
             }
         };
 
-        await setDoc(gameRef, gameData, { merge: true });
+        if (gameRef) {
+            try {
+                await setDoc(gameRef, gameData, { merge: true });
+            } catch (cacheWriteError) {
+                console.warn(`[Cache Write Error] Could not cache ${id}:`, cacheWriteError.message);
+            }
+        }
 
         return NextResponse.json({ success: true, data: gameData });
 
