@@ -50,10 +50,20 @@ export default function OrderConfirmation() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <div className="text-center">
-                    <span className="material-symbols-outlined text-6xl text-primary animate-spin">refresh</span>
-                    <p className="text-sm font-black tracking-widest uppercase mt-4 text-neutral-600">Loading Order...</p>
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#22c55e] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-green-500 animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">FETCHING TRANSACTION VOUCHER</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-10 bg-neutral-100 animate-pulse border border-neutral-300" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>MINTING RECEIPT...</span>
+                            <span className="text-green-600 font-black animate-pulse">VERIFIED</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -61,11 +71,16 @@ export default function OrderConfirmation() {
 
     if (!order) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <div className="text-center border-4 border-neutral-900 bg-white p-12 shadow-[12px_12px_0_#171717]">
-                    <span className="material-symbols-outlined text-6xl text-neutral-300 mb-4">receipt_long</span>
-                    <h1 className="text-3xl font-black uppercase tracking-tight mb-4">Order Not Found</h1>
-                    <Link href="/profile?tab=orders" className="inline-block bg-primary border-4 border-neutral-900 px-6 py-3 font-black text-sm tracking-widest uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all">
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+                <div className="text-center border-4 border-neutral-900 bg-white p-12 shadow-[12px_12px_0_#171717] max-w-md w-full">
+                    <div className="w-14 h-14 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
+                        <span className="material-symbols-outlined text-3xl text-primary">receipt_long</span>
+                    </div>
+                    <h1 className="text-3xl font-black uppercase tracking-tight mb-2 text-neutral-900">Order Not Found</h1>
+                    <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mb-8 leading-relaxed">
+                        The requested order reference could not be located in your history.
+                    </p>
+                    <Link href="/profile?tab=orders" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 px-6 py-3.5 font-black text-xs tracking-widest uppercase shadow-[4px_4px_0_#171717]">
                         View Orders
                     </Link>
                 </div>
@@ -211,12 +226,12 @@ export default function OrderConfirmation() {
                 {/* Action Buttons */}
                 <div className="flex flex-col md:flex-row gap-4">
                     <Link href="/profile?tab=library" 
-                        className="flex-1 bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                        className="btn-tactile flex-1 bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] flex items-center justify-center gap-2">
                         <span className="material-symbols-outlined text-base">videogame_asset</span>
                         View Library
                     </Link>
                     <Link href="/store" 
-                        className="flex-1 bg-white border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                        className="btn-tactile flex-1 bg-white border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] flex items-center justify-center gap-2">
                         <span className="material-symbols-outlined text-base">storefront</span>
                         Continue Shopping
                     </Link>

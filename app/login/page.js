@@ -80,7 +80,7 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-5 text-[14px] font-black tracking-[0.3em] uppercase transition-all shadow-[6px_6px_0_#171717] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0_#171717] disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-none mt-8"
+                            className="btn-tactile w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-5 text-[14px] font-black tracking-[0.3em] uppercase shadow-[6px_6px_0_#171717] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[9px_9px_0_#171717] active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_#171717] disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-none mt-8"
                         >
                             {loading ? "Authenticating..." : "Login"}
                         </button>
@@ -88,8 +88,8 @@ export default function Login() {
 
                     <div className="mt-8 pt-8 border-t-4 border-neutral-900 text-center flex flex-col items-center gap-4">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-neutral-600">No active credentials?</p>
-                        <Link href="/register" className="inline-block bg-white border-4 border-neutral-900 text-neutral-900 px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase transition-all shadow-[2px_2px_0_#171717] hover:shadow-[4px_4px_0_#171717] hover:-translate-y-0.5 group">
-                            Request Access <span className="material-symbols-outlined text-[10px] ml-1 group-hover:text-primary transition-colors inline-block align-middle">arrow_forward</span>
+                        <Link href="/register" className="btn-tactile inline-flex items-center justify-center bg-white border-4 border-neutral-900 text-neutral-900 px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[3px_3px_0_#171717] hover:shadow-[5px_5px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] group">
+                            Request Access <span className="material-symbols-outlined text-[12px] ml-1.5 group-hover:text-primary transition-colors inline-block">arrow_forward</span>
                         </Link>
                     </div>
                 </div>

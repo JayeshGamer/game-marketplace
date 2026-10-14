@@ -53,8 +53,21 @@ export default function ShoppingCart() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <span className="text-2xl font-black uppercase tracking-[0.2em] animate-pulse">Loading Cart...</span>
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-primary animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">VERIFYING TRANSACTION QUEUE</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-12 bg-neutral-100 animate-pulse border-2 border-neutral-300" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>CALCULATING TOTALS...</span>
+                            <span className="text-primary font-black animate-pulse">SYNCING</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -117,8 +130,7 @@ export default function ShoppingCart() {
                             <div className="w-12 h-1 bg-primary" style={{ animation: 'expandWidth 0.5s ease-out' }}></div>
                             <div className="w-8 h-1 bg-neutral-900" style={{ animation: 'expandWidth 0.5s ease-out 0.1s both' }}></div>
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter" 
-                            style={{ fontFamily: "'Bebas Neue', 'Impact', 'Arial Black', sans-serif", letterSpacing: '0.05em' }}>
+                        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight font-display">
                             Shopping Cart
                         </h1>
                     </div>
@@ -145,7 +157,7 @@ export default function ShoppingCart() {
                                 <span className="material-symbols-outlined text-[80px] text-neutral-300 mb-8" style={{ animation: 'float 3s ease-in-out infinite' }}>shopping_cart</span>
                                 <h2 className="text-3xl font-display font-black uppercase tracking-wider text-neutral-900 mb-3">Cart Empty</h2>
                                 <p className="text-neutral-500 font-black tracking-[0.25em] uppercase text-[10px] mb-12">NO ITEMS IN QUEUE</p>
-                                <Link href="/store" className="group relative bg-primary border-4 border-neutral-900 text-neutral-900 px-12 py-6 font-black tracking-[0.25em] uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[12px_12px_0_#171717] transition-all overflow-hidden">
+                                <Link href="/store" className="btn-tactile group relative bg-primary border-4 border-neutral-900 text-neutral-900 px-12 py-6 font-black tracking-[0.25em] uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717] overflow-hidden">
                                     <span className="relative z-10 flex items-center gap-3">
                                         Browse Store
                                         <span className="material-symbols-outlined text-lg transition-transform group-hover:translate-x-2">arrow_forward</span>
@@ -223,7 +235,7 @@ export default function ShoppingCart() {
                                             <button
                                                 onClick={() => handleRemove(item.id)}
                                                 disabled={removingId === item.id}
-                                                className="group/btn flex items-center gap-1.5 px-3 py-1.5 border-2 border-neutral-900 hover:border-neutral-900 hover:bg-red-600 hover:text-white transition-all uppercase font-black text-[9px] tracking-[0.25em] disabled:opacity-50"
+                                                className="btn-tactile group/btn flex items-center gap-1.5 px-3 py-1.5 border-2 border-neutral-900 bg-white hover:border-neutral-900 hover:bg-red-600 hover:text-white uppercase font-black text-[9px] tracking-[0.25em] disabled:opacity-50 shadow-[2px_2px_0_#171717]"
                                             >
                                                 <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:rotate-12">{removingId === item.id ? "hourglass_empty" : "delete"}</span>
                                                 {removingId === item.id ? "REMOVING..." : "REMOVE"}
@@ -273,7 +285,7 @@ export default function ShoppingCart() {
                                     </span>
                                 </div>
 
-                                <Link href="/checkout" className="group/checkout relative block w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-center text-xs font-black tracking-[0.3em] uppercase transition-all shadow-[4px_4px_0_#171717] hover:shadow-[8px_8px_0_#ff4500] hover:border-primary hover:-translate-y-1 overflow-hidden">
+                                <Link href="/checkout" className="btn-tactile group/checkout relative block w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-center text-xs font-black tracking-[0.3em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[8px_8px_0_#ff4500] hover:border-primary overflow-hidden">
                                     <span className="relative z-10 flex items-center justify-center gap-2">
                                         Proceed to Checkout
                                         <span className="material-symbols-outlined text-base transition-transform group-hover/checkout:translate-x-2">arrow_forward</span>

@@ -34,19 +34,19 @@ export default function ContactPage() {
                     
                     {/* Contact Info Cards */}
                     <div className="space-y-4">
-                        <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717]">
+                        <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                             <span className="material-symbols-outlined text-primary text-3xl mb-3 block">mail</span>
                             <h3 className="text-sm font-display font-black uppercase tracking-wider mb-2">Email</h3>
                             <a href="mailto:support@gamevault.com" className="text-xs text-neutral-600 hover:text-primary font-mono">support@gamevault.com</a>
                         </div>
                         
-                        <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717]">
+                        <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                             <span className="material-symbols-outlined text-primary text-3xl mb-3 block">schedule</span>
                             <h3 className="text-sm font-display font-black uppercase tracking-wider mb-2">Hours</h3>
                             <p className="text-xs text-neutral-600 font-bold">24/7 Support Available</p>
                         </div>
 
-                        <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717]">
+                        <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                             <span className="material-symbols-outlined text-primary text-3xl mb-3 block">forum</span>
                             <h3 className="text-sm font-display font-black uppercase tracking-wider mb-2">Community</h3>
                             <Link href="/faq" className="text-xs text-primary hover:underline font-bold">Visit FAQ</Link>
@@ -113,7 +113,7 @@ export default function ContactPage() {
                             <button
                                 type="submit"
                                 disabled={sending}
-                                className="w-full bg-primary border-4 border-neutral-900 px-8 py-4 font-display font-black tracking-wider uppercase text-sm shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="btn-tactile w-full bg-primary border-4 border-neutral-900 px-8 py-4 font-display font-black tracking-wider uppercase text-sm shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {sending ? (
                                     <>

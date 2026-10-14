@@ -105,19 +105,37 @@ export default function Checkout() {
 
     if (cartLoading || authLoading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <span className="text-2xl font-black uppercase tracking-[0.2em] animate-pulse">Establishing Secure Uplink...</span>
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-primary animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">INITIALIZING SECURE PROTOCOL</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-12 bg-neutral-100 animate-pulse border-2 border-neutral-300" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>ESTABLISHING ENCRYPTED UPLINK...</span>
+                            <span className="text-primary font-black animate-pulse">256-BIT</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center font-display text-center p-12">
-                <div className="bg-white border-4 border-neutral-900 p-12 shadow-[12px_12px_0_#ff4500]">
-                    <h2 className="text-3xl font-black uppercase tracking-widest text-neutral-900 mb-4">Authentication Required</h2>
-                    <p className="text-neutral-500 font-bold tracking-[0.2em] uppercase text-[12px] mb-8">You must be logged in to execute a transaction.</p>
-                    <button onClick={() => router.push("/login")} className="bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 font-black tracking-[0.2em] uppercase text-[12px] shadow-[4px_4px_0_#171717] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_#171717] transition-all">
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center font-display text-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-10 md:p-14 shadow-[12px_12px_0_#ff4500] max-w-lg w-full">
+                    <div className="w-16 h-16 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
+                        <span className="material-symbols-outlined text-3xl text-primary">lock</span>
+                    </div>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-3">Authentication Required</h2>
+                    <p className="text-neutral-500 font-bold tracking-[0.15em] uppercase text-xs mb-8 leading-relaxed">
+                        You must authenticate your operator identity before initiating financial execution.
+                    </p>
+                    <button onClick={() => router.push("/login")} className="btn-tactile w-full bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 font-black tracking-[0.2em] uppercase text-xs shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
                         Login to Continue
                     </button>
                 </div>
@@ -212,7 +230,7 @@ export default function Checkout() {
                             type="submit"
                             form="checkout-form"
                             disabled={isProcessing || cartItems.length === 0}
-                            className="w-full bg-primary border-4 border-white text-neutral-900 flex items-center justify-center gap-3 py-6 text-[14px] font-black tracking-[0.3em] uppercase transition-all shadow-[4px_4px_0_#ffffff] hover:-translate-y-1 hover:translate-x-1 hover:shadow-[8px_8px_0_#ffffff] disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-none"
+                            className="btn-tactile w-full bg-primary border-4 border-white text-neutral-900 flex items-center justify-center gap-3 py-6 text-[14px] font-black tracking-[0.3em] uppercase shadow-[4px_4px_0_#ffffff] hover:shadow-[8px_8px_0_#ffffff] disabled:opacity-50 disabled:shadow-none"
                         >
                             <span className="material-symbols-outlined text-xl font-black">
                                 {isProcessing ? "hourglass_empty" : "lock"}

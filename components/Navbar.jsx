@@ -50,27 +50,27 @@ export default function Navbar() {
                         <>
                             {/* Settings Button */}
                             <Link href="/settings" 
-                                className="group flex items-center justify-center size-9 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#ff4500] hover:-translate-y-0.5 transition-all"
+                                className="btn-tactile group flex items-center justify-center size-9 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#ff4500] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                                 title="Settings">
-                                <span className="material-symbols-outlined text-[16px] text-neutral-900 group-hover:text-primary">settings</span>
+                                <span className="material-symbols-outlined text-[16px] text-neutral-900 group-hover:text-primary transition-colors">settings</span>
                             </Link>
 
                             {/* Compact Profile Button */}
-                            <Link href="/profile" className="flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[4px_4px_0_#ff4500] hover:-translate-y-0.5 transition-all group">
-                                <span className="material-symbols-outlined text-[16px] text-neutral-900 group-hover:text-primary">fingerprint</span>
+                            <Link href="/profile" className="btn-tactile flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#ff4500] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none group">
+                                <span className="material-symbols-outlined text-[16px] text-neutral-900 group-hover:text-primary transition-colors">fingerprint</span>
                                 <span className="text-[9px] font-black uppercase tracking-wider text-neutral-900 hidden md:inline">{user.displayName?.split(' ')[0] || "Agent"}</span>
                             </Link>
 
                             <button
                                 onClick={logout}
-                                className="group flex items-center justify-center size-9 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:bg-red-500 hover:text-white transition-all duration-300"
+                                className="btn-tactile group flex items-center justify-center size-9 bg-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:bg-red-500 hover:text-white active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                                 title="Logout"
                             >
                                 <span className="material-symbols-outlined text-[16px]">logout</span>
                             </button>
                         </>
                     ) : (
-                        <Link href="/login" className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white border-2 border-neutral-900 shadow-[2px_2px_0_#ff4500] hover:translate-y-0.5 hover:shadow-none transition-all font-display font-black text-[10px] tracking-wider uppercase whitespace-nowrap">
+                        <Link href="/login" className="btn-tactile flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white border-2 border-neutral-900 shadow-[2px_2px_0_#ff4500] hover:shadow-[4px_4px_0_#ff4500] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none font-display font-black text-[10px] tracking-wider uppercase whitespace-nowrap">
                             <span className="material-symbols-outlined text-[16px]">passkey</span>
                             <span className="hidden md:inline">Login</span>
                         </Link>
@@ -86,13 +86,13 @@ function NavLink({ href, label, icon, active = false }) {
     return (
         <Link
             href={href}
-            className={`group relative flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 hover:-translate-y-0.5 hover:text-primary cursor-pointer whitespace-nowrap
-        ${active ? 'text-primary' : 'text-neutral-900'}
+            className={`group relative flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-200 hover:-translate-y-0.5 hover:text-primary cursor-pointer whitespace-nowrap
+        ${active ? 'text-primary font-black' : 'text-neutral-900'}
       `}
         >
             {icon && <span className="material-symbols-outlined text-[16px]">{icon}</span>}
             {label}
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-200"></span>
         </Link>
     );
 }
@@ -102,13 +102,13 @@ function ActionIcon({ href, icon, badge }) {
     return (
         <Link
             href={href}
-            className="group relative inline-flex items-center justify-center"
+            className="group relative inline-flex items-center justify-center btn-tactile"
         >
-            <div className={`size-9 rounded-none flex items-center justify-center transition-all duration-300 border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_#ff4500]
+            <div className={`size-9 rounded-none flex items-center justify-center border-2 border-neutral-900 shadow-[2px_2px_0_#171717] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[3px_3px_0_#ff4500] group-active:translate-x-0 group-active:translate-y-0 group-active:shadow-none transition-[transform,box-shadow]
         ${badge ? 'bg-primary/10' : 'bg-white'}
       `}>
                 <span className={`material-symbols-outlined text-[16px] transition-colors
-           ${badge ? 'text-primary' : 'text-neutral-900'}
+           ${badge ? 'text-primary' : 'text-neutral-900 group-hover:text-primary'}
         `}>
                     {icon}
                 </span>
@@ -116,7 +116,7 @@ function ActionIcon({ href, icon, badge }) {
             {/* Number Badge */}
             {badge > 0 && (
                 <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-primary flex items-center justify-center border-2 border-neutral-900 shadow-[1px_1px_0_#171717]">
-                    <span className="text-[8px] font-bold text-white leading-none">{badge}</span>
+                    <span className="text-[8px] font-bold text-white leading-none tabular-nums">{badge}</span>
                 </div>
             )}
         </Link>

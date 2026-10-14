@@ -94,10 +94,15 @@ export default function SliceExperience() {
     }, [loading, featuredGames]);
 
     if (loading) return (
-        <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-                <div className="size-12 border-4 border-primary border-t-transparent animate-spin"></div>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-900/40">Synchronizing Matrix...</span>
+        <div className="h-[calc(100vh-4rem)] flex items-center justify-center bg-black font-display px-6">
+            <div className="border-4 border-primary bg-neutral-900 p-8 shadow-[10px_10px_0_#ff4500] text-center max-w-sm w-full">
+                <div className="size-12 border-4 border-primary border-t-transparent animate-spin mx-auto mb-4"></div>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary block">
+                    SYNCHRONIZING MATRIX
+                </span>
+                <p className="text-[9px] font-mono text-neutral-400 mt-2 uppercase tracking-widest">
+                    STREAMING CINEMATIC ARCHIVES
+                </p>
             </div>
         </div>
     );
@@ -223,7 +228,7 @@ export default function SliceExperience() {
                             Memory Load
                         </span>
                         <span className="text-white text-[11px] font-black tracking-[0.2em] uppercase font-outfit">
-                            {(Math.random() * 100).toFixed(2)} GB / 128 GB
+                            64.85 GB / 128 GB
                         </span>
                     </div>
                     <div className="h-8 w-px bg-white/20"></div>

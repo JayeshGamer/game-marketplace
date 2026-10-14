@@ -108,29 +108,51 @@ export function StorefrontRow({ title, games, actionText = "View All" }) {
     return (
         <section className="mb-24">
             <div className="flex justify-between items-end mb-8 border-b-4 border-neutral-900 pb-4">
-                <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-neutral-900">{title}</h2>
-                <Link href="/store" className="text-[12px] font-black tracking-[0.2em] uppercase text-primary border-b-4 border-transparent hover:border-primary transition-colors pb-1">
-                    {actionText} <span className="material-symbols-outlined text-sm inline-block translate-y-0.5">arrow_forward</span>
+                <div className="flex items-center gap-3">
+                    <span className="w-2.5 h-7 bg-primary border border-neutral-900 shadow-[2px_2px_0_#171717]" />
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-neutral-900">{title}</h2>
+                </div>
+                <Link href="/store" className="group text-[11px] font-black tracking-[0.2em] uppercase text-primary hover:text-neutral-900 transition-colors pb-1 flex items-center gap-1.5 btn-tactile">
+                    {actionText} <span className="material-symbols-outlined text-sm inline-block group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {games.map((game, i) => (
-                    <Link href={`/store/${game.id}`} key={i} className="group flex flex-col bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#171717] transition-all duration-200 hover:-translate-y-2 hover:-translate-x-2 hover:shadow-[16px_16px_0_#ff4500]">
-                        <div className="aspect-[3/4] bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden">
-                            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105 mix-blend-multiply bg-cover bg-center" style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : 'none') }}></div>
+                    <Link 
+                        href={`/store/${game.id}`} 
+                        key={i} 
+                        className="group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[12px_12px_0_#ff4500] hover:-translate-y-1.5 hover:-translate-x-1.5 active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_#171717] transition-all duration-200 card-lift"
+                    >
+                        <div className="aspect-[3/4] bg-neutral-900 border-b-4 border-neutral-900 relative overflow-hidden">
+                            <div 
+                                className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-108 bg-cover bg-center" 
+                                style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : 'none') }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             {game.discount && (
-                                <div className="absolute top-4 left-4 bg-primary border-4 border-neutral-900 px-3 py-1 text-[12px] font-black tracking-widest text-neutral-900 shadow-[4px_4px_0_#171717]">
+                                <div className="absolute top-3 left-3 bg-primary border-3 border-neutral-900 px-2.5 py-0.5 text-[11px] font-black tracking-widest text-neutral-900 shadow-[3px_3px_0_#171717] z-10">
                                     -{game.discount}%
                                 </div>
                             )}
+                            {game.rating > 0 && (
+                                <div className="absolute top-3 right-3 bg-neutral-900/90 backdrop-blur-sm border-2 border-white/20 px-2 py-0.5 text-[10px] font-mono font-black text-white shadow-[2px_2px_0_#171717] z-10 flex items-center gap-1">
+                                    <span className="text-primary text-[10px]">★</span>
+                                    <span>{Math.round(game.rating)}</span>
+                                </div>
+                            )}
                         </div>
-                        <div className="p-6 flex flex-col gap-1">
-                            <h3 className="text-xl font-black uppercase tracking-wide text-neutral-900 leading-tight group-hover:text-primary transition-colors">{game.title}</h3>
-                            <div className="flex items-center gap-3 mt-1">
-                                {game.oldPrice && <span className="text-[10px] font-mono text-neutral-500 line-through">${game.oldPrice}</span>}
-                                <span className="text-[14px] font-mono font-bold text-neutral-900">${game.price}</span>
+                        <div className="p-5 flex flex-col gap-1.5 flex-1 justify-between">
+                            <div>
+                                <h3 className="text-lg font-black uppercase tracking-tight text-neutral-900 leading-tight group-hover:text-primary transition-colors line-clamp-1">{game.title}</h3>
+                                <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 line-clamp-1 mt-0.5">{game.developer || "Studio"}</p>
                             </div>
-                            <GenrePills genres={game.genres} />
+                            <div>
+                                <div className="flex items-center gap-3 pt-2">
+                                    {game.oldPrice && <span className="text-[11px] font-mono text-neutral-400 line-through">${game.oldPrice}</span>}
+                                    <span className="text-[15px] font-mono font-black text-neutral-900">${game.price}</span>
+                                </div>
+                                <GenrePills genres={game.genres} />
+                            </div>
                         </div>
                     </Link>
                 ))}
@@ -142,40 +164,50 @@ export function StorefrontRow({ title, games, actionText = "View All" }) {
 export function FreeGamesBlock({ games }) {
     return (
         <section className="mb-24 bg-neutral-900 border-4 border-neutral-900 p-8 md:p-12 shadow-[16px_16px_0_#ff4500]">
-            <div className="flex justify-between items-end mb-12 border-b-4 border-white pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 border-b-4 border-neutral-700 pb-6 gap-4">
                 <div className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-5xl text-primary font-black">card_giftcard</span>
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase text-white">Free Games</h2>
+                    <div className="w-12 h-12 bg-primary border-3 border-neutral-900 flex items-center justify-center shadow-[3px_3px_0_#ffffff]">
+                        <span className="material-symbols-outlined text-2xl text-neutral-900 font-black">card_giftcard</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase text-white leading-none">Free Games Vault</h2>
+                        <p className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase mt-1">Exclusive Weekly Unlocks</p>
+                    </div>
                 </div>
-                <button className="text-[12px] font-black tracking-[0.2em] uppercase text-primary border-4 border-primary px-6 py-3 hover:bg-primary hover:text-neutral-900 transition-colors shadow-[4px_4px_0_#ff4500]">
-                    View More
-                </button>
+                <Link href="/store" className="btn-tactile text-[11px] font-black tracking-[0.2em] uppercase text-neutral-900 bg-primary border-3 border-neutral-900 px-6 py-2.5 hover:bg-white transition-colors shadow-[4px_4px_0_#171717]">
+                    View All Releases
+                </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {games.map((game, i) => (
-                    <div key={i} className="group flex flex-col bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#ffffff] transition-all duration-200 hover:-translate-y-2 hover:-translate-x-2 hover:shadow-[16px_16px_0_#ff4500] overflow-hidden">
-                        <div className="aspect-video bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden group/image">
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-neutral-900/40"></div>
-                            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110 bg-cover bg-center" style={{ backgroundImage: game.bg ? `url(${game.bg})` : (game.cover ? `url(${game.cover})` : 'none') }}></div>
+                    <Link 
+                        href={`/store/${game.id}`} 
+                        key={i} 
+                        className="group flex flex-col bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#ffffff] hover:shadow-[14px_14px_0_#ff4500] hover:-translate-y-1.5 hover:-translate-x-1.5 active:translate-x-0 active:translate-y-0 transition-all duration-200 overflow-hidden"
+                    >
+                        <div className="aspect-video bg-neutral-950 border-b-4 border-neutral-900 relative overflow-hidden group/image">
+                            <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-108 bg-cover bg-center" style={{ backgroundImage: game.bg ? `url(${game.bg})` : (game.cover ? `url(${game.cover})` : 'none') }}></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-neutral-950/30"></div>
                             
                             {/* Promotional Badge */}
-                            <div className="absolute top-4 left-4 bg-primary border-4 border-neutral-900 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-neutral-900 shadow-[4px_4px_0_#171717] z-20">
-                                <span className="block uppercase">Free</span>
+                            <div className="absolute top-4 left-4 bg-primary border-3 border-neutral-900 px-3 py-1 text-[10px] font-black tracking-[0.25em] text-neutral-900 shadow-[3px_3px_0_#171717] z-20">
+                                100% FREE
                             </div>
                             
-                            {/* Corner Accent */}
-                            <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-primary/30 to-transparent pointer-events-none z-10"></div>
-                            
-                            <div className="absolute bottom-4 right-4 bg-primary border-4 border-neutral-900 px-4 py-2 text-[14px] font-black tracking-[0.2em] text-neutral-900 shadow-[4px_4px_0_#171717] rotate-[-5deg] z-30 group-hover:rotate-0 transition-transform duration-300">
-                                CLAIM NOW
+                            <div className="absolute bottom-4 right-4 btn-tactile bg-white border-3 border-neutral-900 px-4 py-2 text-[12px] font-black tracking-[0.2em] text-neutral-900 shadow-[4px_4px_0_#171717] group-hover:bg-primary transition-colors duration-200 flex items-center gap-2">
+                                <span>CLAIM NOW</span>
+                                <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
                             </div>
                         </div>
-                        <div className="p-8 flex flex-col gap-2">
-                            <h3 className="text-2xl font-black uppercase tracking-wide text-neutral-900">{game.title}</h3>
-                            <p className="text-[12px] font-bold tracking-widest text-neutral-500 uppercase">Available until {game.endDate}</p>
+                        <div className="p-6 flex flex-col gap-2">
+                            <h3 className="text-xl font-black uppercase tracking-tight text-neutral-900 group-hover:text-primary transition-colors">{game.title}</h3>
+                            <p className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Available until {game.endDate}
+                            </p>
                             <GenrePills genres={game.genres} />
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </section>
@@ -186,33 +218,55 @@ export function ListCard({ title, games }) {
     return (
         <div className="flex flex-col flex-1 border-4 border-neutral-900 bg-white p-6 shadow-[8px_8px_0_#171717]">
             <div className="group/hd mb-6 border-b-4 border-neutral-900 pb-4 hover:border-primary transition-colors duration-200 cursor-default flex justify-between items-center">
-                <h3 className="text-xl font-black tracking-widest uppercase text-neutral-900 group-hover/hd:text-primary transition-colors duration-200 relative">
-                    {title}
-                    <span className="absolute -bottom-[5px] left-0 h-[3px] w-0 bg-primary group-hover/hd:w-full transition-all duration-300 ease-out" />
-                </h3>
-                <span className="material-symbols-outlined text-primary text-2xl font-black group-hover/hd:translate-x-1 transition-transform duration-200">keyboard_arrow_right</span>
+                <div className="flex items-center gap-2">
+                    <span className="w-2 h-5 bg-primary border border-neutral-900"></span>
+                    <h3 className="text-xl font-black tracking-widest uppercase text-neutral-900 group-hover/hd:text-primary transition-colors duration-200">
+                        {title}
+                    </h3>
+                </div>
+                <span className="material-symbols-outlined text-primary text-xl font-black group-hover/hd:translate-x-1 transition-transform duration-200">arrow_forward</span>
             </div>
-            <div className="flex flex-col gap-0">
+            <div className="flex flex-col divide-y-2 divide-neutral-200">
                 {games.map((game, i) => (
-                    <Link href={`/store/${game.id}`} key={i} className="group flex items-center gap-3 py-3 border-b-4 border-neutral-900 last:border-b-0 transition-all duration-150 hover:bg-neutral-900 hover:px-3 hover:-mx-3">
-                        {/* Rank number — black at rest, orange on hover */}
-                        <span className="text-[12px] font-black font-mono text-neutral-900 group-hover:text-primary transition-colors duration-150 w-5 shrink-0 text-center tabular-nums">
+                    <Link 
+                        href={`/store/${game.id}`} 
+                        key={i} 
+                        className="group flex items-center gap-3.5 py-3.5 transition-all duration-150 hover:bg-neutral-900 hover:px-3 hover:-mx-3 rounded-none"
+                    >
+                        {/* Rank number */}
+                        <span className="text-[13px] font-black font-mono text-neutral-900 group-hover:text-primary transition-colors duration-150 w-6 shrink-0 text-center tabular-nums">
                             {String(i + 1).padStart(2, '0')}
                         </span>
-                        {/* Thumbnail */}
-                        <div className="w-14 h-[72px] bg-neutral-200 border-2 border-neutral-900 shrink-0 relative overflow-hidden transition-all duration-150 group-hover:border-primary">
-                            <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-110 bg-cover bg-center" style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : 'none') }}></div>
+                        
+                        {/* Game thumbnail */}
+                        <div className="w-12 h-14 bg-neutral-900 border-2 border-neutral-900 shrink-0 relative overflow-hidden shadow-[2px_2px_0_#171717] group-hover:border-primary transition-colors">
+                            <div 
+                                className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110" 
+                                style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : 'none') }}
+                            />
                         </div>
-                        {/* Info */}
-                        <div className="flex flex-col justify-center gap-1 min-w-0">
-                            <h4 className="text-[12px] font-black uppercase tracking-wider text-neutral-900 group-hover:text-white transition-colors duration-150 leading-tight truncate">{game.title}</h4>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[11px] font-mono font-bold text-neutral-500 group-hover:text-primary transition-colors duration-150">{game.price === 0 ? "FREE" : `$${game.price}`}</span>
-                                <GenreDots genres={game.genres} />
+
+                        {/* Title & info */}
+                        <div className="flex-1 min-w-0">
+                            <h4 className="text-xs font-black uppercase tracking-tight text-neutral-900 group-hover:text-white transition-colors truncate">
+                                {game.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[11px] font-mono font-bold text-neutral-600 group-hover:text-neutral-300">
+                                    ${game.price}
+                                </span>
+                                {game.rating > 0 && (
+                                    <span className="text-[9px] font-mono text-neutral-400 group-hover:text-primary">
+                                        ★ {Math.round(game.rating)}
+                                    </span>
+                                )}
                             </div>
                         </div>
-                        {/* Arrow reveal */}
-                        <span className="material-symbols-outlined text-base text-primary ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0">arrow_forward</span>
+
+                        {/* Arrow indicator */}
+                        <span className="material-symbols-outlined text-sm text-neutral-400 group-hover:text-primary group-hover:translate-x-1 transition-all opacity-0 group-hover:opacity-100">
+                            chevron_right
+                        </span>
                     </Link>
                 ))}
             </div>

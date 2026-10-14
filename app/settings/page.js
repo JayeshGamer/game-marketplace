@@ -187,9 +187,9 @@ export default function AccountSettings() {
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors ${
+                                        className={`btn-tactile w-full flex items-center gap-3 px-4 py-4 text-left transition-colors ${
                                             activeTab === tab.id
-                                                ? "bg-primary text-neutral-900 font-black"
+                                                ? "bg-primary text-neutral-900 font-black shadow-[inset_4px_0_0_#171717]"
                                                 : "text-neutral-600 hover:bg-neutral-50 font-bold"
                                         }`}
                                     >
@@ -301,7 +301,7 @@ export default function AccountSettings() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+                                        className="btn-tactile w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] disabled:opacity-50"
                                     >
                                         {loading ? "Updating..." : "Update Password"}
                                     </button>
@@ -353,7 +353,7 @@ export default function AccountSettings() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+                                        className="btn-tactile w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] disabled:opacity-50"
                                     >
                                         {loading ? "Updating..." : "Update Email"}
                                     </button>
@@ -385,7 +385,7 @@ export default function AccountSettings() {
                                         <button
                                             onClick={handleDeleteAccount}
                                             disabled={loading}
-                                            className="w-full bg-red-500 border-4 border-red-700 text-white py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[4px_4px_0_#7f1d1d] hover:shadow-[6px_6px_0_#7f1d1d] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0 flex items-center justify-center gap-2"
+                                            className="btn-tactile w-full bg-red-500 border-4 border-red-700 text-white py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[4px_4px_0_#7f1d1d] hover:shadow-[6px_6px_0_#7f1d1d] disabled:opacity-50 flex items-center justify-center gap-2"
                                         >
                                             <span className="material-symbols-outlined text-base">delete_forever</span>
                                             {loading ? "Deleting..." : "Delete Account Permanently"}

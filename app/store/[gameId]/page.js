@@ -175,19 +175,40 @@ export default function GameDetails({ params }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center">
-                <span className="text-2xl font-black uppercase tracking-[0.2em] animate-pulse">Loading...</span>
+            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-primary animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">ACCESSING VAULT ARCHIVE</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-4 bg-neutral-100 animate-pulse w-3/4 border border-neutral-300" />
+                        <div className="h-4 bg-neutral-100 animate-pulse w-1/2 border border-neutral-300" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>DECRYPTING DATA...</span>
+                            <span className="text-primary font-black animate-pulse">● READY</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!game) {
         return (
-            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center">
-                <div className="bg-white p-8 border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500]">
-                    <p className="text-2xl font-black uppercase tracking-[0.2em]">Game Not Found</p>
-                    <Link href="/store" className="mt-4 block text-sm font-bold uppercase tracking-widest underline">
-                        ← Back to Store
+            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6">
+                <div className="bg-white p-8 md:p-12 border-4 border-neutral-900 shadow-[10px_10px_0_#ff4500] max-w-md w-full text-center">
+                    <div className="w-14 h-14 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
+                        <span className="material-symbols-outlined text-3xl text-primary">warning</span>
+                    </div>
+                    <h1 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-2">Record Not Found</h1>
+                    <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mb-8 leading-relaxed">
+                        The requested title ID could not be resolved in the archive index.
+                    </p>
+                    <Link href="/store" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-3.5 text-xs font-black uppercase tracking-[0.2em] shadow-[4px_4px_0_#171717]">
+                        <span className="material-symbols-outlined text-base">arrow_back</span>
+                        Return to Store
                     </Link>
                 </div>
             </div>
@@ -329,13 +350,13 @@ export default function GameDetails({ params }) {
                                     <>
                                         <button
                                             onClick={() => setActiveShot(i => (i - 1 + screenshots.length) % screenshots.length)}
-                                            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-neutral-900/80 border-2 border-neutral-700 text-white flex items-center justify-center hover:bg-primary hover:border-neutral-900 hover:text-neutral-900 transition-all text-sm font-black"
+                                            className="btn-tactile absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-neutral-900/90 border-2 border-neutral-700 text-white flex items-center justify-center hover:bg-primary hover:border-neutral-900 hover:text-neutral-900 text-lg font-black shadow-[2px_2px_0_#000]"
                                             aria-label="Previous screenshot">
                                             ‹
                                         </button>
                                         <button
                                             onClick={() => setActiveShot(i => (i + 1) % screenshots.length)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-neutral-900/80 border-2 border-neutral-700 text-white flex items-center justify-center hover:bg-primary hover:border-neutral-900 hover:text-neutral-900 transition-all text-sm font-black"
+                                            className="btn-tactile absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-neutral-900/90 border-2 border-neutral-700 text-white flex items-center justify-center hover:bg-primary hover:border-neutral-900 hover:text-neutral-900 text-lg font-black shadow-[2px_2px_0_#000]"
                                             aria-label="Next screenshot">
                                             ›
                                         </button>
@@ -462,7 +483,7 @@ export default function GameDetails({ params }) {
 
                                 <div className="p-4">
                                     <button
-                                        className="group w-full border-4 border-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase transition-all duration-150 flex items-center justify-center gap-2.5 bg-primary text-neutral-900 shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#171717] active:translate-y-0 active:shadow-[4px_4px_0_#171717]"
+                                        className="btn-tactile group w-full border-4 border-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase flex items-center justify-center gap-2.5 bg-primary text-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717]"
                                     >
                                         <span className="material-symbols-outlined text-xl transition-transform duration-200 group-hover:scale-125">play_arrow</span>
                                         Play Now
@@ -500,11 +521,10 @@ export default function GameDetails({ params }) {
                                     {/* Add / Remove cart — with icon micro-interaction */}
                                     <button
                                         onClick={() => inCart ? removeFromCart(gameId) : addToCart(game)}
-                                        className={`group w-full border-4 border-neutral-900 py-3.5 text-[10px] font-black tracking-[0.25em] uppercase transition-all duration-150 flex items-center justify-center gap-2
-                                            active:translate-y-1 active:shadow-none
+                                        className={`btn-tactile group w-full border-4 border-neutral-900 py-3.5 text-[10px] font-black tracking-[0.25em] uppercase flex items-center justify-center gap-2
                                             ${inCart
-                                                ? "bg-neutral-900 text-white shadow-[4px_4px_0_#ff4500] hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#ff4500]"
-                                                : "bg-primary text-neutral-900 shadow-[4px_4px_0_#171717] hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#171717]"}`}
+                                                ? "bg-neutral-900 text-white shadow-[4px_4px_0_#ff4500] hover:shadow-[6px_6px_0_#ff4500]"
+                                                : "bg-primary text-neutral-900 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]"}`}
                                     >
                                         <span className="material-symbols-outlined text-base transition-transform duration-200 group-hover:scale-125">{inCart ? "remove_shopping_cart" : "shopping_cart"}</span>
                                         {inCart ? "Remove from Cart" : "Add to Cart"}
@@ -515,8 +535,7 @@ export default function GameDetails({ params }) {
                                         <button
                                             onClick={() => toggleWishlist(game)}
                                             disabled={wLoading}
-                                            className={`group w-full border-4 border-neutral-900 py-3 text-[10px] font-black tracking-[0.25em] uppercase transition-all duration-150 flex items-center justify-center gap-2
-                                                active:translate-y-0.5 active:shadow-none
+                                            className={`btn-tactile group w-full border-4 border-neutral-900 py-3 text-[10px] font-black tracking-[0.25em] uppercase flex items-center justify-center gap-2
                                                 ${inWishlist
                                                     ? "bg-neutral-900 text-white shadow-[2px_2px_0_#ff4500] hover:shadow-[4px_4px_0_#ff4500]"
                                                     : "bg-white text-neutral-900 shadow-[2px_2px_0_#171717] hover:bg-neutral-50 hover:shadow-[4px_4px_0_#171717]"}`}
@@ -526,7 +545,7 @@ export default function GameDetails({ params }) {
                                         </button>
                                     ) : (
                                         <Link href="/login"
-                                            className="w-full border-4 border-dashed border-neutral-300 bg-transparent text-neutral-400 py-3 text-[9px] font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-2 hover:border-neutral-900 hover:text-neutral-900 transition-all">
+                                            className="btn-tactile w-full border-4 border-dashed border-neutral-300 bg-transparent text-neutral-400 py-3 text-[9px] font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-2 hover:border-neutral-900 hover:text-neutral-900 shadow-[2px_2px_0_transparent] hover:shadow-[3px_3px_0_#171717]">
                                             <span className="material-symbols-outlined text-sm">lock</span>
                                             Sign in to Wishlist
                                         </Link>

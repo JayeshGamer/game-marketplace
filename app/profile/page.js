@@ -55,12 +55,20 @@ export default function Profile() {
 
     if (authLoading || loadingData) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <div className="text-center">
-                    <div className="inline-block border-4 border-neutral-900 p-4 bg-white shadow-[6px_6px_0_#ff4500] mb-3 animate-pulse">
-                        <span className="material-symbols-outlined text-5xl text-primary">account_circle</span>
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6 font-display">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-primary animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">ACCESSING OPERATOR DOSSIER</span>
                     </div>
-                    <p className="text-lg font-display font-black uppercase tracking-[0.2em] text-neutral-900">Loading Profile...</p>
+                    <div className="space-y-4">
+                        <div className="h-10 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-6 bg-neutral-100 animate-pulse border border-neutral-300 w-2/3" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>INDEXING LICENSES...</span>
+                            <span className="text-primary font-black animate-pulse">SYNCHRONIZED</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -125,7 +133,7 @@ export default function Profile() {
             <div className="flex gap-2 mb-6 border-b-2 border-neutral-900 pb-0" style={{ animation: 'slideInRight 0.5s ease-out' }}>
                 <button 
                     onClick={() => setActiveTab("library")}
-                    className={`group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 transition-all ${
+                    className={`btn-tactile group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 ${
                         activeTab === "library" 
                             ? "bg-primary text-neutral-900 shadow-[2px_2px_0_#171717] -mb-0.5 z-10" 
                             : "bg-white text-neutral-600 hover:bg-neutral-100 -mb-0.5"
@@ -140,7 +148,7 @@ export default function Profile() {
                 </button>
                 <button 
                     onClick={() => setActiveTab("orders")}
-                    className={`group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 transition-all ${
+                    className={`btn-tactile group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 ${
                         activeTab === "orders" 
                             ? "bg-primary text-neutral-900 shadow-[2px_2px_0_#171717] -mb-0.5 z-10" 
                             : "bg-white text-neutral-600 hover:bg-neutral-100 -mb-0.5"
@@ -227,7 +235,7 @@ function GameLibraryCard({ game, idx }) {
     
     return (
         <Link href={`/store/${game.id}`}
-            className="group cursor-pointer flex flex-col h-full bg-white border-2 border-neutral-900 shadow-[3px_3px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all hover:-translate-y-0.5 overflow-hidden"
+            className="card-lift group cursor-pointer flex flex-col h-full bg-white border-2 border-neutral-900 shadow-[3px_3px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] overflow-hidden"
             style={{ animation: `slideInUp 0.5s ease-out ${idx * 0.05}s both` }}>
             
             <div className="relative aspect-[3/4] overflow-hidden bg-neutral-200 border-b-2 border-neutral-900">
@@ -242,7 +250,7 @@ function GameLibraryCard({ game, idx }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <div className="bg-primary border-2 border-neutral-900 px-4 py-2 text-[10px] font-display font-black tracking-[0.2em] uppercase text-neutral-900 shadow-[2px_2px_0_#171717] flex items-center gap-1.5">
+                    <div className="btn-tactile bg-primary border-2 border-neutral-900 px-4 py-2 text-[10px] font-display font-black tracking-[0.2em] uppercase text-neutral-900 shadow-[2px_2px_0_#171717] flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-base">play_arrow</span>
                         PLAY
                     </div>
@@ -330,8 +338,8 @@ function OrderCard({ order, idx, isExpanded, onToggle }) {
                         </div>
                         <button 
                             onClick={onToggle}
-                            className="bg-white border-2 border-white hover:bg-primary transition-colors p-1.5">
-                            <span className="material-symbols-outlined text-xl text-neutral-900">
+                            className="btn-tactile bg-white border-2 border-white hover:bg-primary transition-colors p-1.5 shadow-[2px_2px_0_rgba(0,0,0,0.5)]">
+                            <span className="material-symbols-outlined text-xl text-neutral-900 transition-transform duration-200">
                                 {isExpanded ? 'expand_less' : 'expand_more'}
                             </span>
                         </button>

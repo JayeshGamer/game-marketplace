@@ -97,20 +97,37 @@ export default function WishlistPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <span className="text-2xl font-black uppercase tracking-[0.2em] animate-pulse">Loading Wishlist...</span>
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+                <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
+                    <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
+                        <div className="w-3 h-3 bg-primary animate-ping" />
+                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">ARCHIVE QUERY IN PROGRESS</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
+                        <div className="h-10 bg-neutral-100 animate-pulse border border-neutral-300" />
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                            <span>LOADING WISHLIST TITLES...</span>
+                            <span className="text-primary font-black animate-pulse">CONNECTING</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-                <div className="bg-white p-12 border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500] max-w-md text-center">
-                    <span className="material-symbols-outlined text-6xl text-neutral-400 mb-6 block">lock</span>
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-neutral-900 mb-3">Sign In Required</h2>
-                    <p className="text-neutral-600 text-sm mb-8 tracking-wide">You need to be signed in to access your wishlist.</p>
-                    <Link href="/login" className="inline-block bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 font-black tracking-[0.2em] uppercase text-sm shadow-[4px_4px_0_#171717] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_#171717] transition-all">
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6 font-display">
+                <div className="bg-white p-10 md:p-14 border-4 border-neutral-900 shadow-[10px_10px_0_#ff4500] max-w-md w-full text-center">
+                    <div className="w-16 h-16 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
+                        <span className="material-symbols-outlined text-3xl text-primary">lock</span>
+                    </div>
+                    <h2 className="text-2xl font-black uppercase tracking-tight text-neutral-900 mb-2">Sign In Required</h2>
+                    <p className="text-neutral-600 text-xs font-bold uppercase tracking-widest mb-8 leading-relaxed">
+                        Access to your archived wishlist titles requires operator authorization.
+                    </p>
+                    <Link href="/login" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-3.5 font-black tracking-[0.2em] uppercase text-xs shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
                         Sign In
                     </Link>
                 </div>
@@ -174,8 +191,7 @@ export default function WishlistPage() {
                     <div className="flex items-center gap-6 mb-6">
                         <DiamondIcon color="#ff4500" size={24} />
                         <div className="w-2 h-12 bg-primary" style={{ animation: 'expandHeight 0.5s ease-out' }}></div>
-                        <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter" 
-                            style={{ fontFamily: "'Bebas Neue', 'Impact', 'Arial Black', sans-serif", letterSpacing: '0.05em' }}>
+                        <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tight font-display">
                             Wishlist
                         </h1>
                     </div>
@@ -187,7 +203,7 @@ export default function WishlistPage() {
                         {wishlist.length > 0 && (
                             <>
                                 <div className="h-4 w-px bg-neutral-900"></div>
-                                <button onClick={clearWishlist} className="font-black hover:text-primary transition-colors relative group">
+                                <button onClick={clearWishlist} className="btn-tactile font-black hover:text-primary transition-colors relative group">
                                     PURGE ALL
                                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                                 </button>
@@ -204,7 +220,7 @@ export default function WishlistPage() {
                     <span className="material-symbols-outlined text-[72px] text-neutral-300 mb-8" style={{ animation: 'float 3s ease-in-out infinite' }}>favorite_border</span>
                     <h2 className="text-3xl font-display font-black uppercase tracking-wider text-neutral-900 mb-3">Wishlist Empty</h2>
                     <p className="text-neutral-500 font-black tracking-[0.25em] uppercase text-[10px] mb-10">NO GAMES ARCHIVED</p>
-                    <Link href="/store" className="group relative bg-primary border-4 border-neutral-900 text-neutral-900 px-10 py-5 font-black tracking-[0.25em] uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717] transition-all overflow-hidden">
+                    <Link href="/store" className="btn-tactile group relative bg-primary border-4 border-neutral-900 text-neutral-900 px-10 py-5 font-black tracking-[0.25em] uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717] overflow-hidden">
                         <span className="relative z-10 flex items-center gap-2">
                             Browse Store
                             <span className="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
@@ -278,13 +294,13 @@ export default function WishlistPage() {
                                             {!inCart ? (
                                                 <button
                                                     onClick={() => addToCart(game)}
-                                                    className="size-9 flex items-center justify-center border-2 border-neutral-900 bg-primary hover:bg-neutral-900 text-neutral-900 hover:text-primary transition-all hover:shadow-[2px_2px_0_#171717] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"
+                                                    className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-primary hover:bg-neutral-900 text-neutral-900 hover:text-primary shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#171717]"
                                                     title="Add to Cart">
                                                     <span className="material-symbols-outlined text-[18px] font-bold transition-transform group-hover:rotate-12">add_shopping_cart</span>
                                                 </button>
                                             ) : (
                                                 <Link href="/cart"
-                                                    className="size-9 flex items-center justify-center border-2 border-neutral-900 bg-neutral-200 text-neutral-900 transition-all hover:bg-primary"
+                                                    className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-neutral-200 text-neutral-900 shadow-[2px_2px_0_#171717] hover:bg-primary"
                                                     title="In Cart">
                                                     <span className="material-symbols-outlined text-[18px] font-bold">shopping_cart</span>
                                                 </Link>
@@ -292,7 +308,7 @@ export default function WishlistPage() {
                                             <button
                                                 onClick={() => removeFromWishlist(game.id)}
                                                 disabled={removing === game.id}
-                                                className="size-9 flex items-center justify-center border-2 border-neutral-900 bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-neutral-900 transition-all disabled:opacity-50 hover:-translate-y-0.5 active:translate-y-0"
+                                                className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#dc2626] disabled:opacity-50"
                                                 title="Remove from Wishlist">
                                                 <span className="material-symbols-outlined text-[18px]">
                                                     {removing === game.id ? "hourglass_empty" : "delete"}

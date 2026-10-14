@@ -89,7 +89,7 @@ export default function Register() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-white border-4 border-neutral-900 text-neutral-900 py-5 text-[14px] font-black tracking-[0.3em] uppercase transition-all shadow-[6px_6px_0_#ff4500] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0_#ff4500] hover:bg-neutral-100 disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-none mt-8"
+                            className="btn-tactile w-full bg-white border-4 border-neutral-900 text-neutral-900 py-5 text-[14px] font-black tracking-[0.3em] uppercase shadow-[6px_6px_0_#ff4500] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[9px_9px_0_#ff4500] hover:bg-neutral-100 active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_#ff4500] disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0 disabled:shadow-none mt-8"
                         >
                             {loading ? "Generating..." : "Create Account"}
                         </button>
@@ -97,8 +97,8 @@ export default function Register() {
 
                     <div className="mt-8 pt-8 border-t-4 border-primary/30 text-center flex flex-col items-center gap-4">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-neutral-400">Already authorized?</p>
-                        <Link href="/login" className="inline-block bg-neutral-900 border-4 border-primary text-primary px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase transition-all shadow-[2px_2px_0_#ff4500] hover:shadow-[4px_4px_0_#ff4500] hover:-translate-y-0.5 group">
-                            Return to Login <span className="material-symbols-outlined text-[10px] ml-1 group-hover:text-white transition-colors inline-block align-middle">keyboard_return</span>
+                        <Link href="/login" className="btn-tactile inline-flex items-center justify-center bg-neutral-900 border-4 border-primary text-primary px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[3px_3px_0_#ff4500] hover:shadow-[5px_5px_0_#ff4500] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#ff4500] group">
+                            Return to Login <span className="material-symbols-outlined text-[12px] ml-1.5 group-hover:text-white transition-colors inline-block">keyboard_return</span>
                         </Link>
                     </div>
                 </div>

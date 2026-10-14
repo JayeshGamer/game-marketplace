@@ -55,8 +55,24 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center">
-        <span className="text-2xl font-black uppercase tracking-[0.2em] animate-pulse">Establishing Connection...</span>
+      <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center font-display px-6">
+        <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[12px_12px_0_#ff4500] max-w-md w-full text-center">
+          <div className="size-14 bg-neutral-900 border-2 border-neutral-900 mx-auto mb-6 flex items-center justify-center shadow-[4px_4px_0_#ff4500]">
+            <span className="material-symbols-outlined text-primary text-3xl animate-spin">sync</span>
+          </div>
+          <span className="bg-neutral-900 text-white px-3 py-1 text-[9px] font-black tracking-[0.3em] uppercase mb-3 inline-block">
+            SYSTEM BOOT
+          </span>
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-neutral-900 mb-2">
+            INITIALIZING VAULT
+          </h2>
+          <p className="text-[10px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+            ESTABLISHING ENCRYPTED UPLINK // VERIFYING DATASETS
+          </p>
+          <div className="w-full bg-neutral-100 border-2 border-neutral-900 h-2 mt-6 overflow-hidden">
+            <div className="h-full bg-primary w-2/3 animate-[pulse_1.5s_infinite]" />
+          </div>
+        </div>
       </div>
     );
   }

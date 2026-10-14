@@ -13,7 +13,7 @@ export default function DeveloperDashboard() {
 
                 <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
                     <SyncButton />
-                    <button className="w-full md:w-auto bg-primary border-4 border-neutral-900 text-neutral-900 hover:bg-orange-600 px-8 py-4 text-[12px] font-black tracking-[0.2em] uppercase transition-all shadow-[4px_4px_0_#171717] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_#171717] flex items-center justify-center gap-3">
+                    <button className="btn-tactile w-full md:w-auto bg-primary border-4 border-neutral-900 text-neutral-900 hover:bg-orange-600 px-8 py-4 text-[12px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#171717] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] flex items-center justify-center gap-3">
                         <span className="material-symbols-outlined text-lg font-black">upload</span>
                         Upload Build
                     </button>
@@ -23,11 +23,11 @@ export default function DeveloperDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
 
                 <div className="lg:col-span-1 space-y-8">
-                    <div className="p-6 bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500]">
+                    <div className="card-lift p-6 bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500]">
                         <span className="text-[12px] font-black tracking-[0.2em] text-neutral-900 bg-primary px-2 py-1 uppercase block w-fit border-2 border-neutral-900 mb-4">Total Revenue</span>
                         <span className="text-3xl font-black font-mono text-neutral-900">$14,285.00</span>
                     </div>
-                    <div className="p-6 bg-neutral-900 border-4 border-neutral-900 shadow-[8px_8px_0_#171717] text-white">
+                    <div className="card-lift p-6 bg-neutral-900 border-4 border-neutral-900 shadow-[8px_8px_0_#171717] text-white">
                         <span className="text-[12px] font-black tracking-[0.2em] uppercase text-neutral-400 border-b-2 border-neutral-700 pb-2 mb-4 block w-fit">Active Titles</span>
                         <span className="text-5xl font-black font-mono text-white">03</span>
                     </div>
@@ -51,7 +51,7 @@ export default function DeveloperDashboard() {
                                     <td className="p-4"><span className="text-neutral-900 border-2 border-neutral-900 bg-green-400 px-2 py-1 text-[10px] tracking-widest font-black">LIVE</span></td>
                                     <td className="p-4 font-mono">$28.00</td>
                                     <td className="p-4 text-right">
-                                        <button className="bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[4px_4px_0_#171717] hover:-translate-y-0.5"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
+                                        <button className="btn-tactile bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#171717] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
                                     </td>
                                 </tr>
                                 <tr className="border-b-4 border-neutral-900 hover:bg-neutral-100 transition-colors">
@@ -59,7 +59,7 @@ export default function DeveloperDashboard() {
                                     <td className="p-4"><span className="text-neutral-900 border-2 border-neutral-900 bg-primary px-2 py-1 text-[10px] tracking-widest font-black">BETA</span></td>
                                     <td className="p-4 font-mono">$60.00</td>
                                     <td className="p-4 text-right">
-                                        <button className="bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[4px_4px_0_#171717] hover:-translate-y-0.5"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
+                                        <button className="btn-tactile bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#171717] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
                                     </td>
                                 </tr>
                                 <tr className="hover:bg-neutral-100 transition-colors">
@@ -67,7 +67,7 @@ export default function DeveloperDashboard() {
                                     <td className="p-4"><span className="text-neutral-900 border-2 border-neutral-900 bg-green-400 px-2 py-1 text-[10px] tracking-widest font-black">LIVE</span></td>
                                     <td className="p-4 font-mono">$40.00</td>
                                     <td className="p-4 text-right">
-                                        <button className="bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[4px_4px_0_#171717] hover:-translate-y-0.5"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
+                                        <button className="btn-tactile bg-neutral-200 border-2 border-neutral-900 p-2 hover:bg-primary transition-colors shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#171717] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"><span className="material-symbols-outlined text-[16px] font-black">edit</span></button>
                                     </td>
                                 </tr>
                             </tbody>

@@ -159,7 +159,7 @@ export default function SearchResults() {
                         <p className="text-sm font-bold text-neutral-500 mb-6">
                             No games found matching &ldquo;{query}&rdquo;. Try different keywords.
                         </p>
-                        <Link href="/store" className="inline-block bg-primary border-4 border-neutral-900 px-8 py-3 text-[10px] font-black tracking-widest uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all">
+                        <Link href="/store" className="btn-tactile inline-block bg-primary border-4 border-neutral-900 px-8 py-3 text-[10px] font-black tracking-widest uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] transition-all">
                             Browse Store
                         </Link>
                     </div>
@@ -169,7 +169,7 @@ export default function SearchResults() {
                             <Link 
                                 key={game.id} 
                                 href={`/store/${game.id}`}
-                                className="group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#ff4500] hover:-translate-y-2 hover:-translate-x-1 transition-all duration-300"
+                                className="card-lift group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#ff4500]"
                                 style={{ animation: `fadeIn 0.4s ease-out ${i * 0.05}s both` }}>
                                 <div className="relative aspect-square overflow-hidden bg-neutral-200 border-b-4 border-neutral-900">
                                     {game.cover ? (

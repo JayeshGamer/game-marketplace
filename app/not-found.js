@@ -69,12 +69,12 @@ export default function NotFound() {
                         {/* Quick links */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                             <Link href="/" 
-                                className="flex items-center gap-2 bg-neutral-900 border-4 border-neutral-900 text-white px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all group">
+                                className="btn-tactile flex items-center gap-2 bg-neutral-900 border-4 border-neutral-900 text-white px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] transition-all group">
                                 <span className="material-symbols-outlined text-base group-hover:scale-110 transition-transform">home</span>
                                 Homepage
                             </Link>
                             <Link href="/store" 
-                                className="flex items-center gap-2 bg-primary border-4 border-neutral-900 text-neutral-900 px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all group">
+                                className="btn-tactile flex items-center gap-2 bg-primary border-4 border-neutral-900 text-neutral-900 px-6 py-3 text-[10px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] transition-all group">
                                 <span className="material-symbols-outlined text-base group-hover:scale-110 transition-transform">storefront</span>
                                 Browse Store
                             </Link>
@@ -102,7 +102,7 @@ export default function NotFound() {
                 {/* System message */}
                 <div className="mt-6 text-center">
                     <p className="text-[8px] font-mono text-neutral-400 tracking-wider">
-                        <span className="text-primary font-black">SYS_ERR_404</span> • RESOURCE_NOT_FOUND • {new Date().toISOString()}
+                        <span className="text-primary font-black">SYS_ERR_404</span> • RESOURCE_NOT_FOUND • DISPATCH_PROTOCOL_FAULT
                     </p>
                 </div>
             </div>

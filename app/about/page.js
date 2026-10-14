@@ -34,7 +34,7 @@ export default function About() {
 
                 {/* Features Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all">
+                    <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                         <span className="material-symbols-outlined text-primary text-4xl mb-4 block">bolt</span>
                         <h3 className="text-lg font-display font-black uppercase tracking-wider mb-3">Lightning Fast</h3>
                         <p className="text-sm text-neutral-600 leading-relaxed">
@@ -42,7 +42,7 @@ export default function About() {
                         </p>
                     </div>
 
-                    <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all">
+                    <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                         <span className="material-symbols-outlined text-primary text-4xl mb-4 block">security</span>
                         <h3 className="text-lg font-display font-black uppercase tracking-wider mb-3">Secure</h3>
                         <p className="text-sm text-neutral-600 leading-relaxed">
@@ -50,7 +50,7 @@ export default function About() {
                         </p>
                     </div>
 
-                    <div className="bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all">
+                    <div className="card-lift bg-white border-2 border-neutral-900 p-6 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500]">
                         <span className="material-symbols-outlined text-primary text-4xl mb-4 block">diversity_3</span>
                         <h3 className="text-lg font-display font-black uppercase tracking-wider mb-3">Community First</h3>
                         <p className="text-sm text-neutral-600 leading-relaxed">
@@ -106,7 +106,7 @@ export default function About() {
 
                 {/* CTA */}
                 <div className="mt-12 text-center">
-                    <Link href="/store" className="inline-block bg-primary border-4 border-neutral-900 px-12 py-4 font-display font-black tracking-wider uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 transition-all">
+                    <Link href="/store" className="btn-tactile inline-block bg-primary border-4 border-neutral-900 px-12 py-4 font-display font-black tracking-wider uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] transition-all">
                         Explore The Store
                     </Link>
                 </div>
