@@ -1,0 +1,20 @@
+Total messages: 18 (Errors: 18, Warnings: 0)
+
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1942:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-103298:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-127:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1877:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-25076:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-119133:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1029:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-11208:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-134582:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-26192:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1020:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-121:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1020:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-134582:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-26192:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-119133:0
+[ERROR] Failed to load resource: the server responded with a status of 500 () @ https://game-marketplace-sage.vercel.app/api/games/igdb-1942:0
+[ERROR] Critical error fetching featured games: FirebaseError: Missing or insufficient permissions. @ https://game-marketplace-sage.vercel.app/_next/static/chunks/ecc596875aa91a63.js:0

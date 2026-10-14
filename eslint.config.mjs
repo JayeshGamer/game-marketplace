@@ -10,6 +10,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "stitch-skills/**",
+    "ui-ux-pro-max-skill/**",
+    ".playwright-mcp/**",
+    "*.cjs",
   ]),
 ]);
 

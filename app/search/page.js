@@ -157,7 +157,7 @@ export default function SearchResults() {
                         <span className="material-symbols-outlined text-6xl text-neutral-200 mb-4 block">search_off</span>
                         <h2 className="text-3xl font-black uppercase tracking-tight mb-2">No Results</h2>
                         <p className="text-sm font-bold text-neutral-500 mb-6">
-                            No games found matching "{query}". Try different keywords.
+                            No games found matching &ldquo;{query}&rdquo;. Try different keywords.
                         </p>
                         <Link href="/store" className="inline-block bg-primary border-4 border-neutral-900 px-8 py-3 text-[10px] font-black tracking-widest uppercase shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] hover:-translate-y-0.5 transition-all">
                             Browse Store

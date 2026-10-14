@@ -94,7 +94,7 @@ export default function About() {
                         </p>
                         <p>
                             We set out to build something different. A platform that respects your time, your bandwidth, and your intelligence. 
-                            No social features you didn't ask for. No invasive DRM. No artificial scarcity. Just pure, unadulterated access to 
+                            No social features you didn&apos;t ask for. No invasive DRM. No artificial scarcity. Just pure, unadulterated access to 
                             the games you want to play.
                         </p>
                         <p>

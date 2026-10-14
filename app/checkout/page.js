@@ -221,7 +221,7 @@ export default function Checkout() {
                         </button>
                         <div className="bg-neutral-800 border-l-4 border-primary p-4 mt-8">
                             <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-400 leading-relaxed text-left">
-                                By confirming this transaction, you agree to Vault's End User License Protocol. Your connection is secured via quantum encryption.
+                                By confirming this transaction, you agree to Vault&apos;s End User License Protocol. Your connection is secured via quantum encryption.
                             </p>
                         </div>
                     </div>

@@ -95,7 +95,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-xl font-display font-black uppercase tracking-wider text-neutral-900 mb-4 flex items-center gap-2">
                             <div className="w-1 h-5 bg-primary"></div>
-                            Children's Privacy
+                            Children&apos;s Privacy
                         </h2>
                         <p className="text-sm">
                             GameVault is not intended for users under 13 years of age. We do not knowingly collect 

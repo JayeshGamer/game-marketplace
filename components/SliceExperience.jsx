@@ -123,14 +123,18 @@ export default function SliceExperience() {
 
             {/* Vertical Slice System */}
             <main className="flex h-full w-full slice-container bg-black relative z-[5]">
-                {featuredGames.map((game, i) => (
+                {featuredGames.map((game, i) => {
+                    const isHovered = activeIndex === i;
+                    const anyHovered = activeIndex !== null;
+                    const flexValue = isHovered ? 2.5 : anyHovered ? 0.7 : 1;
+
+                    return (
                     <section
                         key={game.id}
                         onMouseEnter={() => setActiveIndex(i)}
                         onMouseLeave={() => setActiveIndex(null)}
-                        className={`slice-item relative flex-1 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-crosshair group opacity-100 ${
-                            i === featuredGames.length - 1 ? "border-r border-white/10" : "border-r border-white/10"
-                        }`}
+                        style={{ flex: flexValue }}
+                        className={`slice-item relative overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-crosshair group opacity-100 border-r border-white/10`}
                     >
                         <Link href={`/store/${game.id}`} className="absolute inset-0 z-30"></Link>
 
@@ -171,7 +175,7 @@ export default function SliceExperience() {
                         <div className="absolute inset-0 z-40 flex flex-col justify-end p-10 pointer-events-none slice-content">
                             <div className="mb-4 flex items-center gap-3">
                                 <span className="text-primary font-mono text-[10px] tracking-[0.5em] font-bold uppercase">
-                                    0{i + 1} // {game.genres?.[0] || 'DATA'}
+                                    {`0${i + 1} // ${game.genres?.[0] || 'DATA'}`}
                                 </span>
                                 <div className="h-px w-8 bg-primary/30"></div>
                             </div>
@@ -195,7 +199,8 @@ export default function SliceExperience() {
                             </span>
                         </div>
                     </section>
-                ))}
+                    );
+                })}
             </main>
 
             {/* Dynamic UI Footer Metadata */}

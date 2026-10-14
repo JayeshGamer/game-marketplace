@@ -30,7 +30,9 @@ export default function Navbar() {
                 <div className="flex justify-center flex-shrink-0">
                     <Link href="/" className="flex flex-col items-center group cursor-pointer">
                         <div className="text-primary group-hover:scale-110 transition-transform duration-500">
-                            <span className="material-symbols-outlined text-[32px] leading-none">slow_motion_video</span>
+                            <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S20.17 9 21 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                            </svg>
                         </div>
                         <h1 className="text-neutral-900 text-xl font-black tracking-[0.3em] uppercase mt-1 group-hover:text-primary transition-colors duration-500">
                             VAULT

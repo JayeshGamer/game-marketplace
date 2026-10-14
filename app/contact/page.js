@@ -27,7 +27,7 @@ export default function ContactPage() {
                         <div className="w-1 h-12 bg-primary"></div>
                         <h1 className="text-5xl md:text-6xl font-display font-black uppercase tracking-tight">Contact Support</h1>
                     </div>
-                    <p className="text-neutral-600 text-sm font-bold tracking-wider uppercase ml-6">We're here to help. Reach out anytime.</p>
+                    <p className="text-neutral-600 text-sm font-bold tracking-wider uppercase ml-6">We&apos;re here to help. Reach out anytime.</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -10,26 +10,21 @@ export async function GET(req, { params }) {
         const forceBust = searchParams.get("bust") === "true";
 
         // 1. Check Firestore Cache First
-        const gameRef = doc(db, "games", id);
-        const gameSnap = await getDoc(gameRef);
-
-        if (gameSnap.exists() && !forceBust) {
-            const data = gameSnap.data();
-            const lastUpdated = data.lastUpdated || 0;
-            const now = Date.now();
-            const staleTime = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-            // If found and not stale, return it
-            if (now - lastUpdated < staleTime) {
-                console.log(`[Cache Hit] Returning game data for: ${id}`);
-                return NextResponse.json({ success: true, data });
-            }
-            console.log(`[Cache Stale] Refreshing game data for: ${id}`);
-        } else if (!gameSnap.exists()) {
-            console.log(`[Cache Miss] Fetching fresh data from IGDB for: ${id}`);
-        } else {
-            console.log(`[Cache Bust] Force-refreshing game data for: ${id}`);
+        let gameSnap = null;
+        try {
+            const gameRef = doc(db, "games", id);
+            gameSnap = await getDoc(gameRef);
+        } catch (readErr) {
+            console.warn(`[Firestore Read Warning] Could not read cache for ${id}:`, readErr.message);
         }
+
+        if (gameSnap && gameSnap.exists()) {
+            const data = gameSnap.data();
+            console.log(`[Cache Hit] Returning cached game data for: ${id}`);
+            return NextResponse.json({ success: true, data });
+        }
+
+        console.log(`[Cache Miss] Fetching fresh data from IGDB for: ${id}`);
 
         // 2. Fetch from IGDB
         const accessToken = await getIgdbAccessToken();
@@ -82,7 +77,13 @@ export async function GET(req, { params }) {
             }
         };
 
-        await setDoc(gameRef, gameData, { merge: true });
+        // Cache-aside: attempt to persist, but never fail the request if cache write is denied
+        try {
+            const gameRef = doc(db, "games", id);
+            await setDoc(gameRef, gameData, { merge: true });
+        } catch (cacheErr) {
+            console.warn(`[Firestore Cache Warning] Could not persist cache for ${id}:`, cacheErr.message);
+        }
 
         return NextResponse.json({ success: true, data: gameData });
 

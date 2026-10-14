@@ -1,0 +1,7 @@
+[      22ms] [INFO] [vitesse-webext] Hello world from content script @ chrome-extension://bnlofglpdlboacepdieejiecfbfpmhlb/dist/contentScripts/index.global.js:12
+[    4551ms] [ERROR] Hydration completed but contains mismatches. @ https://turbovpn.com/_nuxt3/DirBTb1D.js:13
+[    5554ms] [ERROR] Failed to load resource: the server responded with a status of 407 (Proxy Authentication Required) @ https://d1tc6kwolctbp4.cloudfront.net/web/promotions/2026_EasterDay_Banner_bg%402x.png?format=auto:0
+[    5555ms] [ERROR] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED @ https://d1tc6kwolctbp4.cloudfront.net/web/promotions/2026_EasterDay_Banner_bg%402x.png?format=auto:0
+[    9273ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/log?key=AIzaSyCx80ru6-RXeTi3GvqkFsMVyMf-vpgIoVw:0
+[    9284ms] [INFO] [2026-04-03T03:57:49.541Z]  Performance: Tries left: 2. @ https://turbovpn.com/_nuxt3/DirBTb1D.js:220
+[    9344ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://b.clarity.ms/collect:0
