@@ -6,6 +6,8 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import MarqueeTicker from "@/components/MarqueeTicker";
+import { playMechanicalClick, playHoverTick, playUplinkChirp } from "@/lib/sound";
 
 // ── Genre colour palette ─────────────────────────────────────────────────────
 const GENRE_COLORS = {
@@ -175,19 +177,19 @@ export default function GameDetails({ params }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6 font-display">
                 <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
                         <div className="w-3 h-3 bg-primary animate-ping" />
-                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">ACCESSING VAULT ARCHIVE</span>
+                        <span className="text-xs font-mono font-black tracking-wider uppercase text-neutral-900">LOADING GAME DETAILS</span>
                     </div>
                     <div className="space-y-4">
                         <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
                         <div className="h-4 bg-neutral-100 animate-pulse w-3/4 border border-neutral-300" />
                         <div className="h-4 bg-neutral-100 animate-pulse w-1/2 border border-neutral-300" />
-                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
-                            <span>DECRYPTING DATA...</span>
-                            <span className="text-primary font-black animate-pulse">● READY</span>
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-xs font-mono text-neutral-500 uppercase tracking-wider">
+                            <span>FETCHING STORE DATA...</span>
+                            <span className="text-primary font-black animate-pulse">VERIFYING</span>
                         </div>
                     </div>
                 </div>
@@ -197,16 +199,16 @@ export default function GameDetails({ params }) {
 
     if (!game) {
         return (
-            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-6 font-display">
                 <div className="bg-white p-8 md:p-12 border-4 border-neutral-900 shadow-[10px_10px_0_#ff4500] max-w-md w-full text-center">
                     <div className="w-14 h-14 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
                         <span className="material-symbols-outlined text-3xl text-primary">warning</span>
                     </div>
-                    <h1 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-2">Record Not Found</h1>
-                    <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mb-8 leading-relaxed">
-                        The requested title ID could not be resolved in the archive index.
+                    <h1 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-2">Game Not Found</h1>
+                    <p className="text-neutral-500 text-xs font-medium uppercase tracking-wider mb-8 leading-relaxed">
+                        This title is not currently available in our game store catalog.
                     </p>
-                    <Link href="/store" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-3.5 text-xs font-black uppercase tracking-[0.2em] shadow-[4px_4px_0_#171717]">
+                    <Link href="/store" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-3.5 text-xs font-black uppercase tracking-wider shadow-[4px_4px_0_#171717]">
                         <span className="material-symbols-outlined text-base">arrow_back</span>
                         Return to Store
                     </Link>
@@ -297,6 +299,9 @@ export default function GameDetails({ params }) {
                     </div>
                 </div>
             </div>
+
+            {/* Continuous Marquee Ticker */}
+            <MarqueeTicker bgClass="bg-primary text-neutral-900 border-neutral-900" />
 
             {/* ── Body ─────────────────────────────────────────────────── */}
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col lg:flex-row gap-10">
@@ -520,7 +525,16 @@ export default function GameDetails({ params }) {
                                 <div className="p-4 space-y-3">
                                     {/* Add / Remove cart — with icon micro-interaction */}
                                     <button
-                                        onClick={() => inCart ? removeFromCart(gameId) : addToCart(game)}
+                                        onClick={() => {
+                                            if (inCart) {
+                                                playMechanicalClick(600, 0.2);
+                                                removeFromCart(gameId);
+                                            } else {
+                                                playUplinkChirp();
+                                                addToCart(game);
+                                            }
+                                        }}
+                                        onMouseEnter={() => playHoverTick()}
                                         className={`btn-tactile group w-full border-4 border-neutral-900 py-3.5 text-[10px] font-black tracking-[0.25em] uppercase flex items-center justify-center gap-2
                                             ${inCart
                                                 ? "bg-neutral-900 text-white shadow-[4px_4px_0_#ff4500] hover:shadow-[6px_6px_0_#ff4500]"
@@ -533,7 +547,11 @@ export default function GameDetails({ params }) {
                                     {/* Wishlist */}
                                     {user ? (
                                         <button
-                                            onClick={() => toggleWishlist(game)}
+                                            onClick={() => {
+                                                playMechanicalClick(880, 0.15);
+                                                toggleWishlist(game);
+                                            }}
+                                            onMouseEnter={() => playHoverTick()}
                                             disabled={wLoading}
                                             className={`btn-tactile group w-full border-4 border-neutral-900 py-3 text-[10px] font-black tracking-[0.25em] uppercase flex items-center justify-center gap-2
                                                 ${inWishlist
@@ -545,6 +563,8 @@ export default function GameDetails({ params }) {
                                         </button>
                                     ) : (
                                         <Link href="/login"
+                                            onClick={() => playMechanicalClick()}
+                                            onMouseEnter={() => playHoverTick()}
                                             className="btn-tactile w-full border-4 border-dashed border-neutral-300 bg-transparent text-neutral-400 py-3 text-[9px] font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-2 hover:border-neutral-900 hover:text-neutral-900 shadow-[2px_2px_0_transparent] hover:shadow-[3px_3px_0_#171717]">
                                             <span className="material-symbols-outlined text-sm">lock</span>
                                             Sign in to Wishlist
@@ -556,8 +576,8 @@ export default function GameDetails({ params }) {
                                         <div className="flex items-center gap-2 border-2 border-neutral-900 px-3 py-2 transition-colors duration-700"
                                             style={{ backgroundColor: `${accentColor}15`, borderLeftColor: accentColor, borderLeftWidth: 4 }}>
                                             <span className="material-symbols-outlined text-sm" style={{ color: accentColor }}>check_circle</span>
-                                            <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: accentColor }}>In your cart</span>
-                                            <Link href="/cart" className="ml-auto text-[8px] font-black uppercase tracking-widest underline hover:opacity-70 transition-opacity" style={{ color: accentColor }}>View →</Link>
+                                            <span className="text-xs font-black uppercase tracking-wider" style={{ color: accentColor }}>In your cart</span>
+                                            <Link href="/cart" className="ml-auto text-xs font-black uppercase tracking-wider underline hover:opacity-70 transition-opacity" style={{ color: accentColor }}>View →</Link>
                                         </div>
                                     )}
                                 </div>
@@ -567,29 +587,29 @@ export default function GameDetails({ params }) {
 
                     {/* ── Game Info ── */}
                     <div className="border-4 border-neutral-900 bg-white shadow-[6px_6px_0_#171717] overflow-hidden">
-                        <div className="flex items-center gap-2.5 px-4 py-2.5 bg-neutral-900 border-b-4 border-neutral-900">
-                            <DiamondIcon color={accentColor} size={13} />
-                            <h3 className="text-[8px] font-black tracking-[0.3em] uppercase text-white">Game Info</h3>
+                        <div className="flex items-center gap-2.5 px-4 py-3 bg-neutral-900 border-b-4 border-neutral-900">
+                            <DiamondIcon color={accentColor} size={14} />
+                            <h3 className="text-xs font-black tracking-wider uppercase text-white">Game Information</h3>
                         </div>
 
                         <ul className="divide-y-2 divide-neutral-100">
                             {[
                                 ["Developer", game.developer],
                                 ["Publisher", game.publisher],
-                                ["Release", game.releaseDate],
+                                ["Release Date", game.releaseDate],
                             ].filter(([, v]) => v).map(([label, value]) => (
-                                <li key={label} className="px-4 py-2.5 flex items-baseline justify-between gap-3">
-                                    <span className="text-[7px] font-bold tracking-widest uppercase text-neutral-400 shrink-0">{label}</span>
-                                    <span className="text-[10px] font-bold text-right leading-snug">{value}</span>
+                                <li key={label} className="px-4 py-3 flex items-baseline justify-between gap-3">
+                                    <span className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 shrink-0">{label}</span>
+                                    <span className="text-xs font-bold text-neutral-900 text-right leading-snug">{value}</span>
                                 </li>
                             ))}
                             {genres.length > 0 && (
                                 <li className="px-4 py-3">
-                                    <p className="text-[7px] font-bold tracking-[0.3em] uppercase text-neutral-400 mb-2">Genres</p>
+                                    <p className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 mb-2">Genres</p>
                                     <div className="flex flex-wrap gap-1.5">
                                         {genres.map(g => (
                                             <span key={g}
-                                                className="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-white border-2 border-neutral-900"
+                                                className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white border border-neutral-900"
                                                 style={{ backgroundColor: genreColor(g), boxShadow: "2px 2px 0 #000" }}>
                                                 {g}
                                             </span>
@@ -604,13 +624,13 @@ export default function GameDetails({ params }) {
                     {game.platforms && game.platforms.length > 0 && (
                         <div className="border-4 border-neutral-900 overflow-hidden shadow-[4px_4px_0_#171717]"
                             style={{ background: "#111" }}>
-                            <div className="flex items-center gap-2.5 px-4 py-2.5 border-b-4 border-neutral-800">
-                                <DiamondIcon color={accentColor} size={13} />
-                                <h3 className="text-[8px] font-black tracking-[0.3em] uppercase text-white">Platforms</h3>
+                            <div className="flex items-center gap-2.5 px-4 py-3 border-b-4 border-neutral-800">
+                                <DiamondIcon color={accentColor} size={14} />
+                                <h3 className="text-xs font-black tracking-wider uppercase text-white">Supported Platforms</h3>
                             </div>
-                            <ul className="p-3 space-y-px">
+                            <ul className="p-3 space-y-1">
                                 {game.platforms.map(p => (
-                                    <li key={p} className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-white py-1.5 border-b border-neutral-800 last:border-0">
+                                    <li key={p} className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-white py-1.5 border-b border-neutral-800 last:border-0">
                                         <span className="w-2 h-2 rotate-45 inline-block shrink-0 border border-neutral-700" style={{ backgroundColor: accentColor }} />
                                         {p}
                                     </li>

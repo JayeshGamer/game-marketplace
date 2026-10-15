@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { playMechanicalClick, playHoverTick } from "@/lib/sound";
 
 export default function OrderConfirmation() {
     const searchParams = useSearchParams();
@@ -226,11 +227,15 @@ export default function OrderConfirmation() {
                 {/* Action Buttons */}
                 <div className="flex flex-col md:flex-row gap-4">
                     <Link href="/profile?tab=library" 
+                        onClick={() => playMechanicalClick()}
+                        onMouseEnter={() => playHoverTick()}
                         className="btn-tactile flex-1 bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] flex items-center justify-center gap-2">
                         <span className="material-symbols-outlined text-base">videogame_asset</span>
                         View Library
                     </Link>
                     <Link href="/store" 
+                        onClick={() => playMechanicalClick()}
+                        onMouseEnter={() => playHoverTick()}
                         className="btn-tactile flex-1 bg-white border-4 border-neutral-900 text-neutral-900 py-4 text-[11px] font-black tracking-[0.25em] uppercase text-center shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717] flex items-center justify-center gap-2">
                         <span className="material-symbols-outlined text-base">storefront</span>
                         Continue Shopping

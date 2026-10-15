@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
+import { playMechanicalClick, playHoverTick } from "@/lib/sound";
 
 export default function Profile() {
     const { user, loading: authLoading } = useAuth();
@@ -59,14 +60,14 @@ export default function Profile() {
                 <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
                         <div className="w-3 h-3 bg-primary animate-ping" />
-                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">ACCESSING OPERATOR DOSSIER</span>
+                        <span className="text-xs font-mono font-black tracking-widest uppercase text-neutral-900">LOADING GAME LIBRARY...</span>
                     </div>
                     <div className="space-y-4">
                         <div className="h-10 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
                         <div className="h-6 bg-neutral-100 animate-pulse border border-neutral-300 w-2/3" />
-                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
-                            <span>INDEXING LICENSES...</span>
-                            <span className="text-primary font-black animate-pulse">SYNCHRONIZED</span>
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-xs font-mono text-neutral-500 uppercase tracking-wider">
+                            <span>SYNCING WITH CLOUD...</span>
+                            <span className="text-primary font-black animate-pulse">CONNECTING</span>
                         </div>
                     </div>
                 </div>
@@ -77,7 +78,7 @@ export default function Profile() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-40 px-6 md:px-12 pb-24 max-w-7xl mx-auto relative overflow-x-hidden">
+        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-36 px-4 sm:px-6 md:px-12 pb-24 max-w-7xl mx-auto relative overflow-x-hidden">
             
             {/* Decorative background patterns */}
             <div className="absolute inset-0 pointer-events-none -z-10">
@@ -86,45 +87,52 @@ export default function Profile() {
                     backgroundSize: '32px 32px',
                     opacity: 0.35
                 }}></div>
-                <div className="absolute -top-32 -right-32 w-[500px] h-[300px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-[14px] border-orange-200/40"></div>
-                <div className="absolute top-[15%] -left-40 w-[400px] h-[400px] rounded-full border-[16px] border-slate-200/50"></div>
             </div>
 
             {/* Header Profile Info */}
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 pb-6 relative">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 pb-6 border-b-4 border-neutral-900 relative">
+                <span className="absolute -top-3 left-0 font-mono text-xs text-neutral-400 select-none pointer-events-none">+</span>
+                <span className="absolute -top-3 right-0 font-mono text-xs text-neutral-400 select-none pointer-events-none">+</span>
+
                 <div className="relative group">
-                    <div className="w-20 h-20 md:w-24 md:h-24 bg-white border-4 border-neutral-900 shadow-[4px_4px_0_#171717] flex items-center justify-center transition-all hover:shadow-[6px_6px_0_#ff4500] hover:-translate-y-0.5">
+                    <div className="w-20 h-20 md:w-24 md:h-24 bg-white border-4 border-neutral-900 shadow-[4px_4px_0_#171717] flex items-center justify-center transition-all hover:shadow-[6px_6px_0_#ff4500] hover:-translate-y-0.5 relative">
+                        <span className="absolute top-0.5 left-1 font-mono text-xs text-neutral-400 select-none">+</span>
+                        <span className="absolute top-0.5 right-1 font-mono text-xs text-neutral-400 select-none">+</span>
                         <div className="w-full h-full bg-gradient-to-br from-neutral-200 to-neutral-300 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-4xl md:text-5xl text-neutral-900">person</span>
+                            <span className="material-symbols-outlined text-4xl md:text-5xl text-neutral-900">sports_esports</span>
                         </div>
                     </div>
-                    <div className="absolute -bottom-1.5 -right-1.5 bg-primary border-2 border-neutral-900 px-1.5 py-0.5 text-[7px] font-black tracking-widest uppercase">
-                        LV {purchasedGames.length}
+                    <div className="absolute -bottom-1.5 -right-1.5 bg-primary border-2 border-neutral-900 px-2 py-0.5 text-[9px] font-mono font-black tracking-widest uppercase">
+                        LV {purchasedGames.length || 1}
                     </div>
                 </div>
                 
                 <div className="flex-1">
-                    <div className="inline-flex items-center gap-1.5 bg-primary text-neutral-900 px-2 py-0.5 font-black tracking-[0.25em] uppercase text-[9px] border-2 border-neutral-900 mb-2">
-                        <span className="material-symbols-outlined text-xs">verified</span>
-                        VERIFIED
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="inline-flex items-center gap-1.5 bg-primary text-neutral-900 px-2.5 py-0.5 font-display font-black tracking-wider uppercase text-[10px] border-2 border-neutral-900">
+                            <span className="material-symbols-outlined text-xs">verified</span>
+                            VERIFIED PLAYER
+                        </div>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-display font-black tracking-tight uppercase leading-none mb-1.5">
-                        {user.email.split('@')[0]}
+                    <h1 className="text-3xl md:text-5xl font-display font-black tracking-tight uppercase leading-none mb-1.5 text-neutral-900">
+                        {user.displayName || user.email.split('@')[0]}
                     </h1>
-                    <div className="flex items-center gap-2 text-[10px] text-neutral-600 font-bold tracking-wider uppercase">
+                    <div className="flex items-center gap-2 text-xs text-neutral-600 font-mono font-bold tracking-wider">
                         <span className="material-symbols-outlined text-sm">mail</span>
                         {user.email}
                     </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <div className="bg-white border-2 border-neutral-900 px-3 py-2 shadow-[2px_2px_0_#171717] text-center">
-                        <div className="text-2xl font-black font-mono text-primary">{purchasedGames.length}</div>
-                        <div className="text-[7px] font-black tracking-[0.2em] uppercase text-neutral-500 mt-0.5">Games</div>
+                <div className="flex gap-3">
+                    <div className="bg-white border-4 border-neutral-900 px-5 py-2.5 shadow-[3px_3px_0_#171717] text-center relative">
+                        <span className="absolute top-0.5 left-1 font-mono text-xs text-neutral-400 select-none">+</span>
+                        <div className="text-2xl font-black font-mono text-primary leading-none">{purchasedGames.length}</div>
+                        <div className="text-[10px] font-display font-black tracking-wider uppercase text-neutral-600 mt-1">GAMES OWNED</div>
                     </div>
-                    <div className="bg-white border-2 border-neutral-900 px-3 py-2 shadow-[2px_2px_0_#171717] text-center">
-                        <div className="text-2xl font-black font-mono text-primary">{orders.length}</div>
-                        <div className="text-[7px] font-black tracking-[0.2em] uppercase text-neutral-500 mt-0.5">Orders</div>
+                    <div className="bg-white border-4 border-neutral-900 px-5 py-2.5 shadow-[3px_3px_0_#171717] text-center relative">
+                        <span className="absolute top-0.5 right-1 font-mono text-xs text-neutral-400 select-none">+</span>
+                        <div className="text-2xl font-black font-mono text-primary leading-none">{orders.length}</div>
+                        <div className="text-[10px] font-display font-black tracking-wider uppercase text-neutral-600 mt-1">ORDERS</div>
                     </div>
                 </div>
             </div>
@@ -132,7 +140,8 @@ export default function Profile() {
             {/* Tab Navigation */}
             <div className="flex gap-2 mb-6 border-b-2 border-neutral-900 pb-0" style={{ animation: 'slideInRight 0.5s ease-out' }}>
                 <button 
-                    onClick={() => setActiveTab("library")}
+                    onClick={() => { playMechanicalClick(); setActiveTab("library"); }}
+                    onMouseEnter={() => playHoverTick()}
                     className={`btn-tactile group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 ${
                         activeTab === "library" 
                             ? "bg-primary text-neutral-900 shadow-[2px_2px_0_#171717] -mb-0.5 z-10" 
@@ -147,7 +156,8 @@ export default function Profile() {
                     </span>
                 </button>
                 <button 
-                    onClick={() => setActiveTab("orders")}
+                    onClick={() => { playMechanicalClick(); setActiveTab("orders"); }}
+                    onMouseEnter={() => playHoverTick()}
                     className={`btn-tactile group relative flex items-center gap-2 px-4 py-2.5 font-display font-black tracking-[0.15em] uppercase text-xs border-2 border-neutral-900 ${
                         activeTab === "orders" 
                             ? "bg-primary text-neutral-900 shadow-[2px_2px_0_#171717] -mb-0.5 z-10" 
@@ -235,10 +245,16 @@ function GameLibraryCard({ game, idx }) {
     
     return (
         <Link href={`/store/${game.id}`}
-            className="card-lift group cursor-pointer flex flex-col h-full bg-white border-2 border-neutral-900 shadow-[3px_3px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] overflow-hidden"
+            onClick={() => playMechanicalClick()}
+            onMouseEnter={() => playHoverTick()}
+            className="card-lift group cursor-pointer flex flex-col h-full bg-white border-4 border-neutral-900 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] overflow-hidden relative"
             style={{ animation: `slideInUp 0.5s ease-out ${idx * 0.05}s both` }}>
             
-            <div className="relative aspect-[3/4] overflow-hidden bg-neutral-200 border-b-2 border-neutral-900">
+            {/* Blueprint corner crosshairs */}
+            <span className="absolute top-1 left-2 font-mono text-[10px] text-neutral-400 select-none pointer-events-none z-20">+</span>
+            <span className="absolute top-1 right-2 font-mono text-[10px] text-neutral-400 select-none pointer-events-none z-20">+</span>
+
+            <div className="relative aspect-[3/4] overflow-hidden bg-neutral-200 border-b-4 border-neutral-900">
                 {isGradient ? (
                     <div className="absolute inset-0" style={{ background: bgImage }}></div>
                 ) : (
@@ -250,35 +266,38 @@ function GameLibraryCard({ game, idx }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <div className="btn-tactile bg-primary border-2 border-neutral-900 px-4 py-2 text-[10px] font-display font-black tracking-[0.2em] uppercase text-neutral-900 shadow-[2px_2px_0_#171717] flex items-center gap-1.5">
+                    <div className="btn-tactile bg-primary border-2 border-neutral-900 px-4 py-2 text-xs font-display font-black tracking-wider uppercase text-neutral-900 shadow-[2px_2px_0_#171717] flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-base">play_arrow</span>
-                        PLAY
+                        PLAY NOW
                     </div>
                 </div>
                 
                 {/* Purchase date badge */}
                 {game.purchaseDate && (
-                    <div className="absolute top-1.5 right-1.5 bg-neutral-900/90 border border-primary px-1.5 py-0.5 text-[7px] font-black tracking-wider text-primary">
+                    <div className="absolute top-2 right-2 bg-neutral-900 border border-primary px-2 py-0.5 text-[9px] font-mono font-bold tracking-wider text-primary shadow-[2px_2px_0_#000]">
                         {new Date(game.purchaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()}
                     </div>
                 )}
             </div>
             
-            <div className="flex flex-col p-3 flex-grow justify-between">
+            <div className="flex flex-col p-3.5 flex-grow justify-between">
                 <div>
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-mono uppercase text-neutral-500 font-bold">GAME #{idx + 1}</span>
+                    </div>
                     <h3 className="text-neutral-900 font-display font-black uppercase tracking-tight text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2 mb-1">
                         {game.title}
                     </h3>
                     {game.developer && (
-                        <p className="text-neutral-500 text-[8px] font-bold tracking-wider uppercase">{game.developer}</p>
+                        <p className="text-neutral-500 text-xs font-medium uppercase">{game.developer}</p>
                     )}
                 </div>
-                <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-neutral-200">
+                <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t-2 border-neutral-900">
                     <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 bg-primary animate-pulse"></div>
-                        <p className="text-[8px] font-black tracking-wider uppercase text-neutral-500">OWNED</p>
+                        <div className="w-1.5 h-1.5 bg-emerald-500 animate-pulse"></div>
+                        <p className="text-[10px] font-mono font-black tracking-wider uppercase text-neutral-900">INSTALLED & READY</p>
                     </div>
-                    <span className="text-neutral-400 text-[8px] font-mono font-bold tracking-wider">0 HRS</span>
+                    <span className="text-neutral-500 text-[10px] font-mono font-bold">DRM-FREE</span>
                 </div>
             </div>
         </Link>
@@ -299,11 +318,15 @@ function OrderCard({ order, idx, isExpanded, onToggle }) {
 
     return (
         <div 
-            className="bg-white border-2 border-neutral-900 shadow-[3px_3px_0_#171717] hover:shadow-[5px_5px_0_#ff4500] transition-all overflow-hidden"
+            className="bg-white border-4 border-neutral-900 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all overflow-hidden relative"
             style={{ animation: `slideInUp 0.5s ease-out ${idx * 0.08}s both` }}>
             
+            {/* Blueprint corner crosshairs */}
+            <span className="absolute top-1 left-2 font-mono text-[10px] text-neutral-400 select-none pointer-events-none z-20">+</span>
+            <span className="absolute top-1 right-2 font-mono text-[10px] text-neutral-400 select-none pointer-events-none z-20">+</span>
+
             {/* Order Header */}
-            <div className="p-4 bg-gradient-to-r from-neutral-900 to-neutral-800 border-b-2 border-neutral-900">
+            <div className="p-4 bg-gradient-to-r from-neutral-900 to-neutral-800 border-b-4 border-neutral-900">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
                         <div className="bg-primary border-2 border-white p-2 shadow-[2px_2px_0_rgba(0,0,0,0.5)]">
@@ -311,14 +334,14 @@ function OrderCard({ order, idx, isExpanded, onToggle }) {
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-white font-display font-black tracking-wider uppercase text-base">
+                                <h3 className="text-white font-mono font-black tracking-wider uppercase text-base">
                                     {order.orderId}
                                 </h3>
-                                <span className="bg-green-500 border border-white text-neutral-900 px-2 py-0.5 text-[10px] font-black tracking-wider uppercase">
+                                <span className="bg-green-500 border border-white text-neutral-900 px-2 py-0.5 text-[9px] font-mono font-black tracking-wider uppercase">
                                     {order.status}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 text-neutral-400 text-xs font-bold tracking-wider uppercase">
+                            <div className="flex items-center gap-3 text-neutral-400 text-xs font-mono font-bold tracking-wider uppercase">
                                 <div className="flex items-center gap-1">
                                     <span className="material-symbols-outlined text-xs">calendar_today</span>
                                     {formattedDate}
@@ -333,11 +356,12 @@ function OrderCard({ order, idx, isExpanded, onToggle }) {
                     
                     <div className="flex items-center gap-3">
                         <div className="text-right">
-                            <div className="text-[11px] font-bold tracking-wider uppercase text-neutral-500 mb-0.5">TOTAL</div>
+                            <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-neutral-400 mb-0.5">TOTAL PAID</div>
                             <div className="text-2xl font-black font-mono text-primary">${order.total.toFixed(2)}</div>
                         </div>
                         <button 
-                            onClick={onToggle}
+                            onClick={() => { playMechanicalClick(); onToggle(); }}
+                            onMouseEnter={() => playHoverTick()}
                             className="btn-tactile bg-white border-2 border-white hover:bg-primary transition-colors p-1.5 shadow-[2px_2px_0_rgba(0,0,0,0.5)]">
                             <span className="material-symbols-outlined text-xl text-neutral-900 transition-transform duration-200">
                                 {isExpanded ? 'expand_less' : 'expand_more'}
@@ -346,6 +370,7 @@ function OrderCard({ order, idx, isExpanded, onToggle }) {
                     </div>
                 </div>
             </div>
+
 
             {/* Order Items Summary */}
             <div className="p-4 bg-neutral-50">

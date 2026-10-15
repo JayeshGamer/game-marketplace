@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import SliceExperience from "@/components/SliceExperience";
 import CustomCursor from "@/components/CustomCursor";
+import MarqueeTicker from "@/components/MarqueeTicker";
 import { StorefrontRow, FreeGamesBlock, ListCard } from "@/components/StorefrontComponents";
 
 
@@ -60,14 +61,14 @@ export default function Home() {
           <div className="size-14 bg-neutral-900 border-2 border-neutral-900 mx-auto mb-6 flex items-center justify-center shadow-[4px_4px_0_#ff4500]">
             <span className="material-symbols-outlined text-primary text-3xl animate-spin">sync</span>
           </div>
-          <span className="bg-neutral-900 text-white px-3 py-1 text-[9px] font-black tracking-[0.3em] uppercase mb-3 inline-block">
-            SYSTEM BOOT
+          <span className="bg-neutral-900 text-white px-3 py-1 text-xs font-mono font-bold tracking-wider uppercase mb-3 inline-block">
+            GAMEVAULT STORE
           </span>
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-neutral-900 mb-2">
-            INITIALIZING VAULT
+          <h2 className="text-2xl md:text-3xl font-display font-black tracking-tight uppercase text-neutral-900 mb-2">
+            LOADING STORE CATALOG
           </h2>
-          <p className="text-[10px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
-            ESTABLISHING ENCRYPTED UPLINK // VERIFYING DATASETS
+          <p className="text-xs font-mono font-medium text-neutral-500 uppercase">
+            CONNECTING TO STOREFRONT • SYNCING LATEST RELEASES
           </p>
           <div className="w-full bg-neutral-100 border-2 border-neutral-900 h-2 mt-6 overflow-hidden">
             <div className="h-full bg-primary w-2/3 animate-[pulse_1.5s_infinite]" />
@@ -89,8 +90,9 @@ export default function Home() {
       <CustomCursor />
       
       {/* Existing Hero Component - Full Bleed */}
-      <div className="w-full mb-16">
+      <div className="w-full">
         <SliceExperience />
+        <MarqueeTicker />
       </div>
 
       <div className="flex flex-col w-full min-h-screen text-neutral-900 font-display relative bg-[#f5f5f7]">
@@ -142,12 +144,17 @@ export default function Home() {
           <div className="absolute bottom-[60%] left-[40%] w-8 h-8 bg-primary/15 rounded-full"></div>
         </div>
         
-        <div className="max-w-7xl mx-auto px-12 w-full pb-32 relative z-10">
+        <div className="max-w-7xl mx-auto px-12 w-full pb-32 relative z-10 pt-16">
           {/* Discover / New Releases Section */}
           <StorefrontRow title="Discover" games={discoverList} />
 
           {/* Free Games Promo Block */}
           <FreeGamesBlock games={freeGames} />
+
+          {/* Sector Breaker Marquee */}
+          <div className="my-16 -mx-12">
+            <MarqueeTicker reverse={true} bgClass="bg-neutral-950 text-white border-neutral-900" />
+          </div>
 
           {/* Catalog Matrices (3 Column Lists) */}
           <section className="flex flex-col lg:flex-row gap-8 mb-24">
@@ -156,8 +163,8 @@ export default function Home() {
             <ListCard title="Upcoming" games={secondaryList} />
           </section>
 
-          {/* On Sale Section */}
-          <StorefrontRow title="Action Sequence" games={saleList} />
+          {/* Special Offers Section */}
+          <StorefrontRow title="Special Offers" games={saleList} />
         </div>
       </div>
     </>

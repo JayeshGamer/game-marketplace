@@ -218,3 +218,78 @@ body {
     transform: translateY(100%);
   }
 }
+
+/* Awwwards Neo-Brutalist & Industrial Animation Suite */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite reverse;
+}
+
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Audio visualizer equalizer bars */
+@keyframes eq1 {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+@keyframes eq2 {
+  0%, 100% { height: 15px; }
+  50% { height: 5px; }
+}
+@keyframes eq3 {
+  0%, 100% { height: 8px; }
+  50% { height: 19px; }
+}
+
+.eq-bar-1 { animation: eq1 0.7s ease-in-out infinite; }
+.eq-bar-2 { animation: eq2 0.55s ease-in-out infinite; }
+.eq-bar-3 { animation: eq3 0.85s ease-in-out infinite; }
+
+/* Hazard warning stripes */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff4500,
+    #ff4500 12px,
+    #171717 12px,
+    #171717 24px
+  );
+}
+
+.hazard-stripes-sm {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff4500,
+    #ff4500 6px,
+    #171717 6px,
+    #171717 12px
+  );
+}
+
+/* Halftone dot pattern overlay */
+.halftone-overlay {
+  background-image: radial-gradient(#171717 1px, transparent 1px);
+  background-size: 8px 8px;
+}

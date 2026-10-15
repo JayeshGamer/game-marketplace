@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import MarqueeTicker from "@/components/MarqueeTicker";
+import { playMechanicalClick, playHoverTick } from "@/lib/sound";
 
 // ── Genre colour palette — covers all IGDB genres + common themes ────────────
 const GENRE_COLORS = {
-    // IGDB canonical genres
     "action":                       "#dc2626",
     "adventure":                    "#16a34a",
     "shooter":                      "#2563eb",
@@ -43,7 +44,6 @@ const GENRE_COLORS = {
     "card game":                    "#84cc16",
     "board game":                   "#84cc16",
     "shoot 'em up":                 "#3b82f6",
-    // IGDB themes (often stored in genres array)
     "open world":                   "#10b981",
     "dark fantasy":                 "#6d28d9",
     "fantasy":                      "#8b5cf6",
@@ -88,24 +88,25 @@ const GENRE_COLORS = {
     "action-adventure":             "#ea580c",
     "action adventure":             "#ea580c",
 };
+
 function genreColor(name = "") {
     return GENRE_COLORS[name.toLowerCase().trim()] ?? "#525252";
 }
 
 const PRICE_BUCKETS = [
-    { label: "Free",       fn: (p) => p === 0 },
-    { label: "Under $20",  fn: (p) => p > 0 && p < 20 },
-    { label: "$20 – $40",  fn: (p) => p >= 20 && p < 40 },
-    { label: "$40 – $60",  fn: (p) => p >= 40 && p < 60 },
-    { label: "Over $60",   fn: (p) => p >= 60 },
+    { label: "Free to Play", fn: (p) => p === 0 },
+    { label: "Under $20",    fn: (p) => p > 0 && p < 20 },
+    { label: "$20 to $40",   fn: (p) => p >= 20 && p < 40 },
+    { label: "$40 to $60",   fn: (p) => p >= 40 && p < 60 },
+    { label: "Over $60",     fn: (p) => p >= 60 },
 ];
 
 const SORT_OPTIONS = [
-    { value: "title_asc",   label: "Title A → Z" },
-    { value: "title_desc",  label: "Title Z → A" },
-    { value: "price_asc",   label: "Price ↑" },
-    { value: "price_desc",  label: "Price ↓" },
-    { value: "rating_desc", label: "Highest Rated" },
+    { value: "title_asc",   label: "Title: A → Z" },
+    { value: "title_desc",  label: "Title: Z → A" },
+    { value: "price_asc",   label: "Price: Low to High" },
+    { value: "price_desc",  label: "Price: High to Low" },
+    { value: "rating_desc", label: "Top Rated First" },
 ];
 
 export default function StoreCatalog() {
@@ -115,13 +116,18 @@ export default function StoreCatalog() {
     const [search, setSearch]             = useState("");
     const [activeGenres, setActiveGenres] = useState([]);
     const [activePrices, setActivePrices] = useState([]);
-    const [sort, setSort]                 = useState("title_asc");
+    const [sort, setSort]                 = useState("rating_desc");
     const [sortOpen, setSortOpen]         = useState(false);
-    const [viewMode, setViewMode]         = useState("featured"); // "featured" or "catalog"
+    // Default to catalog so user IMMEDIATELY has the full filter sidebar!
+    const [viewMode, setViewMode]         = useState("catalog");
     const sortRef = useRef(null);
 
-    // Check if we need to go directly to catalog view
+    // Check if we need to switch view or select genre from URL
     useEffect(() => {
+        const view = searchParams.get("view");
+        if (view === "featured") {
+            setViewMode("featured");
+        }
         const genre = searchParams.get("genre");
         if (genre) {
             setViewMode("catalog");
@@ -153,7 +159,7 @@ export default function StoreCatalog() {
         return () => document.removeEventListener("mousedown", handle);
     }, []);
 
-    // Derive genre list — normalize to lowercase for consistent matching
+    // Derive genre list
     const allGenres = useMemo(() => {
         const set = new Set();
         games.forEach(g => g.genres?.forEach(genre => set.add(genre.toLowerCase().trim())));
@@ -172,7 +178,6 @@ export default function StoreCatalog() {
             );
         }
         if (activeGenres.length) {
-            // case-insensitive: normalize game genres on compare
             result = result.filter(g =>
                 g.genres?.some(genre => activeGenres.includes(genre.toLowerCase().trim()))
             );
@@ -195,12 +200,17 @@ export default function StoreCatalog() {
     }, [games, search, activeGenres, activePrices, sort]);
 
     function toggleGenre(g) {
+        playMechanicalClick(850, 0.12);
         setActiveGenres(p => p.includes(g) ? p.filter(x => x !== g) : [...p, g]);
     }
     function togglePrice(label) {
+        playMechanicalClick(800, 0.12);
         setActivePrices(p => p.includes(label) ? p.filter(x => x !== label) : [...p, label]);
     }
-    function clearAll() { setActiveGenres([]); setActivePrices([]); setSearch(""); }
+    function clearAll() { 
+        playMechanicalClick(650, 0.15);
+        setActiveGenres([]); setActivePrices([]); setSearch(""); 
+    }
 
     const activeCount = activeGenres.length + activePrices.length;
 
@@ -268,62 +278,104 @@ export default function StoreCatalog() {
     return (
         <div className="min-h-screen bg-[#f5f5f7] text-neutral-900 font-display pt-28">
 
+            {/* ── TOP STORE MODE SWITCHER TABS ─────────────────────────────────── */}
+            <div className="bg-neutral-900 text-white border-b-4 border-neutral-900 px-6 md:px-12 py-3">
+                <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => { setViewMode("catalog"); playMechanicalClick(1100); }}
+                            className={`btn-tactile flex items-center gap-2.5 px-5 py-2.5 text-xs font-black tracking-wider uppercase border-2 transition-all ${
+                                viewMode === "catalog"
+                                    ? "bg-primary text-neutral-900 border-primary shadow-[3px_3px_0_#ffffff]"
+                                    : "bg-neutral-800 text-neutral-300 border-neutral-700 hover:bg-neutral-700 hover:text-white"
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-base">filter_list</span>
+                            ALL GAMES & FILTERS
+                            <span className={`text-[10px] font-mono px-1.5 py-0.5 font-bold ${viewMode === "catalog" ? "bg-neutral-900 text-white" : "bg-neutral-950 text-neutral-300"}`}>
+                                {games.length}
+                            </span>
+                        </button>
+
+                        <button
+                            onClick={() => { setViewMode("featured"); playMechanicalClick(1100); }}
+                            className={`btn-tactile flex items-center gap-2 px-5 py-2.5 text-xs font-black tracking-wider uppercase border-2 transition-all ${
+                                viewMode === "featured"
+                                    ? "bg-primary text-neutral-900 border-primary shadow-[3px_3px_0_#ffffff]"
+                                    : "bg-neutral-800 text-neutral-300 border-neutral-700 hover:bg-neutral-700 hover:text-white"
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-base">star</span>
+                            STORE SPOTLIGHTS
+                        </button>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs font-mono font-medium text-neutral-400">
+                        <span className="flex items-center gap-1.5 text-emerald-400">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            INSTANT ACTIVATION
+                        </span>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="hidden sm:inline">100% VERIFIED STEAM/PC KEYS</span>
+                    </div>
+                </div>
+            </div>
+
             {viewMode === "featured" ? (
                 /* ══════════════════════════════════════════════════════════════════════
-                   FEATURED VIEW - Homepage-style with sections
+                   FEATURED VIEW - Curated Spotlights & Categories
                    ══════════════════════════════════════════════════════════════════════ */
                 <>
                     {/* Hero Banner */}
                     {featuredGame && (
-                        <div className="relative h-[70vh] md:h-[80vh] overflow-hidden border-b-4 border-neutral-900">
-                            {/* Background */}
+                        <div className="relative h-[70vh] md:h-[78vh] overflow-hidden border-b-4 border-neutral-900">
                             <div 
                                 className="absolute inset-0 bg-cover bg-center"
                                 style={{ backgroundImage: `url(${featuredGame.bg || featuredGame.cover})` }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/95 via-neutral-900/70 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/95 via-neutral-900/75 to-transparent" />
                             <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent" />
                             
                             {/* Content */}
-                            <div className="relative z-10 h-full max-w-7xl mx-auto px-8 md:px-12 flex flex-col justify-end pb-20">
+                            <div className="relative z-10 h-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-end pb-16">
                                 <div className="max-w-2xl">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <div className="w-2 h-2 bg-primary animate-pulse" />
-                                        <span className="text-[9px] font-black tracking-[0.3em] uppercase text-primary">Featured</span>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-2.5 h-2.5 bg-primary animate-pulse" />
+                                        <span className="text-xs font-mono font-black tracking-widest uppercase text-primary">FEATURED SPOTLIGHT</span>
                                     </div>
                                     
-                                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none text-white mb-6"
+                                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none text-white mb-4"
                                         style={{ textShadow: "4px 4px 0 #000" }}>
                                         {featuredGame.title}
                                     </h1>
                                     
                                     {featuredGame.genres && featuredGame.genres.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mb-6">
+                                        <div className="flex flex-wrap gap-2 mb-5">
                                             {featuredGame.genres.slice(0, 3).map((genre, i) => (
                                                 <span key={i} 
-                                                    className="px-3 py-1 text-[9px] font-black tracking-widest uppercase text-white border-2 border-white/30 backdrop-blur-sm"
-                                                    style={{ backgroundColor: genreColor(genre) + '99' }}>
+                                                    className="px-3 py-1 text-xs font-black tracking-wider uppercase text-white border-2 border-white/30 backdrop-blur-sm shadow-[2px_2px_0_#000]"
+                                                    style={{ backgroundColor: genreColor(genre) + 'cc' }}>
                                                     {genre}
                                                 </span>
                                             ))}
                                         </div>
                                     )}
                                     
-                                    <p className="text-sm font-bold text-neutral-300 leading-relaxed mb-8 line-clamp-3">
-                                        {featuredGame.description || "Experience the ultimate gaming adventure."}
+                                    <p className="text-sm font-medium text-neutral-300 leading-relaxed mb-6 line-clamp-3">
+                                        {featuredGame.description || "Discover an unforgettable gaming experience with high-velocity action and immersive gameplay."}
                                     </p>
                                     
                                     <div className="flex flex-wrap gap-4">
                                         <Link href={`/store/${featuredGame.id}`}
-                                            className="btn-tactile bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_#171717] flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-base">play_arrow</span>
-                                            View Details
+                                            className="btn-tactile bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 text-xs font-black tracking-wider uppercase shadow-[6px_6px_0_#171717] hover:shadow-[8px_8px_0_#171717] flex items-center gap-2.5">
+                                            <span className="material-symbols-outlined text-lg">play_arrow</span>
+                                            VIEW GAME DETAILS
                                         </Link>
                                         <button 
                                             onClick={() => setViewMode("catalog")}
-                                            className="btn-tactile bg-white/10 backdrop-blur-sm border-4 border-white/30 text-white px-8 py-4 text-[11px] font-black tracking-[0.25em] uppercase hover:bg-white/20 active:translate-x-0.5 active:translate-y-0.5 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-base">grid_view</span>
-                                            Browse All
+                                            className="btn-tactile bg-white text-neutral-900 border-4 border-neutral-900 px-8 py-4 text-xs font-black tracking-wider uppercase shadow-[6px_6px_0_#171717] hover:bg-neutral-100 flex items-center gap-2.5">
+                                            <span className="material-symbols-outlined text-lg">grid_view</span>
+                                            BROWSE CATALOG & FILTERS
                                         </button>
                                     </div>
                                 </div>
@@ -331,19 +383,21 @@ export default function StoreCatalog() {
                         </div>
                     )}
 
+                    <MarqueeTicker bgClass="bg-primary text-neutral-900 border-neutral-900" />
+
                     {/* Quick Stats Bar */}
-                    <div className="bg-neutral-900 border-b-4 border-neutral-900 py-8">
-                        <div className="max-w-7xl mx-auto px-8 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="bg-neutral-900 border-b-4 border-neutral-900 py-6">
+                        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-4">
                             {[
-                                { label: "Total Games", value: games.length, icon: "videogame_asset" },
-                                { label: "New This Week", value: newReleases.length, icon: "new_releases" },
-                                { label: "Top Rated", value: popularGames.length, icon: "star" },
-                                { label: "Genres", value: allGenres.length, icon: "category" },
+                                { label: "Catalog Titles", value: games.length, icon: "videogame_asset" },
+                                { label: "New Releases", value: newReleases.length, icon: "new_releases" },
+                                { label: "Top Rated Titles", value: popularGames.length, icon: "star" },
+                                { label: "Game Genres", value: allGenres.length, icon: "category" },
                             ].map((stat, i) => (
                                 <div key={i} className="bg-neutral-950 border-2 border-neutral-800 p-4 shadow-[4px_4px_0_#000000] text-center hover:border-primary/60 transition-colors group">
-                                    <span className="material-symbols-outlined text-2xl text-primary mb-1.5 block group-hover:scale-110 transition-transform">{stat.icon}</span>
-                                    <div className="text-3xl md:text-4xl font-black font-mono text-white mb-1 tabular-nums">{String(stat.value).padStart(3, '0')}</div>
-                                    <div className="text-[9px] font-bold tracking-[0.2em] uppercase text-neutral-400">{stat.label}</div>
+                                    <span className="material-symbols-outlined text-2xl text-primary mb-1 block group-hover:scale-110 transition-transform">{stat.icon}</span>
+                                    <div className="text-3xl font-black font-mono text-white mb-1 tabular-nums">{String(stat.value).padStart(3, '0')}</div>
+                                    <div className="text-xs font-bold tracking-wider uppercase text-neutral-400">{stat.label}</div>
                                 </div>
                             ))}
                         </div>
@@ -351,305 +405,345 @@ export default function StoreCatalog() {
 
                     {/* Sections Container */}
                     <div className="max-w-screen-2xl mx-auto py-12 space-y-16">
-                        
-                        {/* Popular Games */}
                         {popularGames.length > 0 && (
                             <GameSection 
                                 title="Popular Games" 
-                                subtitle="Top Rated Titles"
+                                subtitle="Top Rated Titles Community Favorite"
                                 icon="trending_up"
                                 games={popularGames}
                                 accentColor="#ff4500"
                             />
                         )}
 
-                        {/* New Releases */}
                         {newReleases.length > 0 && (
                             <GameSection 
                                 title="New Releases" 
-                                subtitle="Latest Additions"
+                                subtitle="Latest Additions to the Store"
                                 icon="new_releases"
                                 games={newReleases}
                                 accentColor="#22c55e"
                             />
                         )}
 
-                        {/* Sports & Racing */}
                         {sportGames.length > 0 && (
                             <GameSection 
                                 title="Sports & Racing" 
-                                subtitle="FIFA, F1, NBA & More"
+                                subtitle="High-Speed Simulation and Competition"
                                 icon="sports_soccer"
                                 games={sportGames}
                                 accentColor="#eab308"
                             />
                         )}
 
-                        {/* Action & Shooter */}
                         {actionGames.length > 0 && (
                             <GameSection 
                                 title="Action & Shooter" 
-                                subtitle="High-Octane Gameplay"
-                                icon="explosion"
+                                subtitle="Adrenaline-Charged Fast Paced Gameplay"
+                                icon="sports_esports"
                                 games={actionGames}
                                 accentColor="#dc2626"
                             />
                         )}
 
-                        {/* Adventure */}
                         {adventureGames.length > 0 && (
                             <GameSection 
                                 title="Adventure" 
-                                subtitle="Epic Journeys Await"
+                                subtitle="Story-Driven Journeys and World Exploration"
                                 icon="explore"
                                 games={adventureGames}
                                 accentColor="#16a34a"
                             />
                         )}
 
-                        {/* RPG */}
                         {rpgGames.length > 0 && (
                             <GameSection 
                                 title="Role-Playing Games" 
-                                subtitle="Deep Story Experiences"
+                                subtitle="Deep Character Progression and Quests"
                                 icon="auto_stories"
                                 games={rpgGames}
                                 accentColor="#7c3aed"
                             />
                         )}
 
-                        {/* Browse All CTA */}
-                        <div className="px-8 md:px-12">
-                            <div className="bg-white border-4 border-neutral-900 p-12 text-center shadow-[12px_12px_0_#171717]">
-                                <div className="max-w-2xl mx-auto">
-                                    <div className="w-16 h-16 bg-primary border-4 border-neutral-900 mx-auto mb-6 flex items-center justify-center shadow-[4px_4px_0_#171717]">
-                                        <span className="material-symbols-outlined text-3xl text-neutral-900">grid_view</span>
-                                    </div>
-                                    <h2 className="text-4xl font-black uppercase tracking-tight mb-4">Explore Full Catalog</h2>
-                                    <p className="text-sm font-bold text-neutral-600 mb-8 leading-relaxed">
-                                        Browse our complete collection of {games.length}+ games with advanced filters, 
-                                        sorting options, and detailed search.
-                                    </p>
-                                    <button 
-                                        onClick={() => setViewMode("catalog")}
-                                        className="btn-tactile inline-flex items-center gap-3 bg-neutral-900 border-4 border-neutral-900 text-white px-10 py-5 text-[11px] font-black tracking-[0.25em] uppercase shadow-[6px_6px_0_#ff4500] hover:shadow-[8px_8px_0_#ff4500] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[2px_2px_0_#ff4500]">
-                                        <span className="material-symbols-outlined text-lg">storefront</span>
-                                        Browse All Games
-                                    </button>
+                        {/* Direct Jump to Catalog CTA */}
+                        <div className="px-6 md:px-12">
+                            <div className="bg-white border-4 border-neutral-900 p-10 md:p-14 text-center shadow-[12px_12px_0_#171717] max-w-4xl mx-auto">
+                                <div className="w-16 h-16 bg-primary border-4 border-neutral-900 mx-auto mb-6 flex items-center justify-center shadow-[4px_4px_0_#171717]">
+                                    <span className="material-symbols-outlined text-3xl text-neutral-900">filter_list</span>
                                 </div>
+                                <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-3">Explore Full Catalog & Filters</h2>
+                                <p className="text-sm font-medium text-neutral-600 mb-8 max-w-xl mx-auto">
+                                    Browse our entire store database with dedicated genre filters, price brackets, search by developer, and instant sorting.
+                                </p>
+                                <button 
+                                    onClick={() => setViewMode("catalog")}
+                                    className="btn-tactile inline-flex items-center gap-3 bg-neutral-900 border-4 border-neutral-900 text-white px-10 py-5 text-xs font-black tracking-widest uppercase shadow-[6px_6px_0_#ff4500] hover:shadow-[8px_8px_0_#ff4500]">
+                                    <span className="material-symbols-outlined text-lg">tune</span>
+                                    OPEN FILTER SIDEBAR & CATALOG
+                                </button>
                             </div>
                         </div>
                     </div>
                 </>
             ) : (
                 /* ══════════════════════════════════════════════════════════════════════
-                   CATALOG VIEW - Original filterable grid
+                   CATALOG VIEW - High-Converting Store with Elevated Filter Sidebar
                    ══════════════════════════════════════════════════════════════════════ */
                 <>
-                    {/* ── PAGE HEADER ──────────────────────────────────────────────── */}
-                    <div className="pt-12 pb-0 px-8 md:px-12 lg:px-16 border-b-4 border-neutral-900">
-                        {/* Back to Featured */}
-                        <button 
-                            onClick={() => { setViewMode("featured"); clearAll(); }}
-                            className="btn-tactile flex items-center gap-2 text-[10px] font-black tracking-[0.25em] uppercase text-neutral-500 hover:text-primary active:scale-98 mb-6 group">
-                            <span className="material-symbols-outlined text-base group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                            Back to Featured
-                        </button>
-
-                        {/* Breadcrumb */}
-                        <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] uppercase text-neutral-500 mb-8">
-                            <Link href="/" className="hover:text-primary transition-colors">HOME</Link>
-                            <span className="text-neutral-400">/</span>
-                            <span className="text-neutral-900">CATALOG</span>
-                        </div>
-
-                        {/* Title + counter */}
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                            <div>
-                                <h1 className="text-7xl md:text-[9rem] font-black tracking-tighter uppercase leading-none text-neutral-900">
-                                    CATALOG
-                                </h1>
+                    {/* Page Header */}
+                    <div className="pt-8 pb-6 px-6 md:px-12 border-b-4 border-neutral-900 bg-white">
+                        <div className="max-w-7xl mx-auto">
+                            {/* Breadcrumb */}
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 mb-4">
+                                <Link href="/" className="hover:text-primary transition-colors">HOME</Link>
+                                <span className="text-neutral-400">/</span>
+                                <span className="text-neutral-900 font-black">STORE CATALOG</span>
                             </div>
-                            <div className="flex flex-col items-start md:items-end gap-1 pb-2">
-                                <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Titles indexed</span>
-                                <span className="text-5xl font-black font-mono text-primary tracking-tighter tabular-nums">
-                                    {loading ? "—" : String(games.length).padStart(3, "0")}
-                                </span>
-                            </div>
-                        </div>
 
-                        {/* Search bar */}
-                        <div className="flex items-center border-4 border-neutral-900 bg-white focus-within:shadow-[4px_4px_0_#ff4500] transition-shadow duration-150 -mx-1 mb-0 shadow-[4px_4px_0_#171717]">
-                            <span className="material-symbols-outlined text-neutral-400 text-xl px-4 shrink-0">search</span>
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                placeholder="Search titles, developers, genres…"
-                                className="flex-1 bg-transparent py-4 text-neutral-900 placeholder-neutral-400 text-[13px] font-bold tracking-wide outline-none font-mono"
-                            />
-                            {search && (
-                                <button onClick={() => setSearch("")} className="material-symbols-outlined text-neutral-400 hover:text-primary text-xl px-4 transition-colors">
-                                    close
-                                </button>
-                            )}
+                            {/* Title & Counter */}
+                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                                <div>
+                                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none text-neutral-900">
+                                        GAME CATALOG
+                                    </h1>
+                                    <p className="text-xs font-mono uppercase text-neutral-500 mt-2">
+                                        EXPLORE {games.length} VERIFIED PC TITLES • INSTANT KEYS & DIGITAL DOWNLOADS
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-neutral-100 border-2 border-neutral-900 px-4 py-2 text-right shadow-[2px_2px_0_#171717]">
+                                        <div className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-widest">SHOWING</div>
+                                        <div className="text-2xl font-black font-mono text-primary leading-tight">
+                                            {loading ? "..." : filtered.length} <span className="text-xs text-neutral-500 font-sans">GAMES</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Search bar */}
+                            <div className="flex items-center border-4 border-neutral-900 bg-white focus-within:shadow-[4px_4px_0_#ff4500] transition-shadow shadow-[4px_4px_0_#171717]">
+                                <span className="material-symbols-outlined text-neutral-400 text-2xl px-4 shrink-0">search</span>
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={e => setSearch(e.target.value)}
+                                    placeholder="Search by game title, studio developer, or genre..."
+                                    className="flex-1 bg-transparent py-3.5 text-neutral-900 placeholder-neutral-400 text-sm font-bold tracking-wide outline-none font-sans"
+                                />
+                                {search && (
+                                    <button onClick={() => setSearch("")} className="material-symbols-outlined text-neutral-400 hover:text-primary text-xl px-4 transition-colors">
+                                        close
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* ── MAIN LAYOUT ──────────────────────────────────────────────── */}
-                    <div className="flex flex-col lg:flex-row px-8 md:px-12 lg:px-16 pt-8 pb-24 gap-10">
+                    <MarqueeTicker reverse={true} bgClass="bg-neutral-900 text-[#ff4500]" />
 
-                        {/* ── SIDEBAR ──────────────────────────────────────────────── */}
-                        <aside className="w-full lg:w-56 shrink-0">
-                            <div className="sticky top-24">
-                                {/* Filter header */}
-                                <div className="flex items-center justify-between border-b-4 border-neutral-900 pb-4 mb-6">
-                                    <span className="text-[10px] font-black tracking-[0.3em] uppercase text-neutral-900 flex items-center gap-2">
-                                        FILTERS
-                                        {activeCount > 0 && (
-                                            <span className="bg-primary text-neutral-900 border-2 border-neutral-900 px-1.5 py-0 text-[9px] font-black tabular-nums leading-4 shadow-[2px_2px_0_#171717]">
-                                                {activeCount}
+                    {/* ── MAIN CATALOG LAYOUT WITH ELEVATED FILTER SIDEBAR ─────────── */}
+                    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
+                        <div className="flex flex-col lg:flex-row gap-8 items-start">
+
+                            {/* ── ELEVATED FILTER SIDEBAR ───────────────────────────── */}
+                            <aside className="w-full lg:w-72 shrink-0">
+                                <div className="bg-white border-4 border-neutral-900 p-6 shadow-[8px_8px_0_#171717] sticky top-28">
+                                    
+                                    {/* Filter header */}
+                                    <div className="flex items-center justify-between border-b-4 border-neutral-900 pb-4 mb-6">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary text-xl font-black">tune</span>
+                                            <span className="text-sm font-black tracking-wider uppercase text-neutral-900">
+                                                FILTERS
                                             </span>
+                                            {activeCount > 0 && (
+                                                <span className="bg-primary text-neutral-900 border-2 border-neutral-900 px-2 py-0.5 text-xs font-black tabular-nums shadow-[2px_2px_0_#171717]">
+                                                    {activeCount}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {activeCount > 0 && (
+                                            <button 
+                                                onClick={clearAll} 
+                                                className="btn-tactile text-xs font-black tracking-wider uppercase text-neutral-500 hover:text-primary transition-colors flex items-center gap-1"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">restart_alt</span>
+                                                RESET
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Price Filter Block */}
+                                    <FilterBlock title="Price Range">
+                                        <div className="space-y-1.5 pt-1">
+                                            {PRICE_BUCKETS.map(bucket => {
+                                                const active = activePrices.includes(bucket.label);
+                                                return (
+                                                    <button 
+                                                        key={bucket.label} 
+                                                        onClick={() => togglePrice(bucket.label)}
+                                                        className={`flex items-center justify-between px-3 py-2 w-full text-left border-2 transition-all ${
+                                                            active 
+                                                                ? "bg-neutral-900 text-white border-neutral-900 shadow-[2px_2px_0_#ff4500]" 
+                                                                : "bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-transparent hover:border-neutral-300"
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-center gap-2.5">
+                                                            <div className={`w-4 h-4 border-2 border-neutral-900 shrink-0 transition-all flex items-center justify-center ${active ? "bg-primary border-primary" : "bg-white"}`}>
+                                                                {active && <span className="material-symbols-outlined text-xs text-neutral-900 font-black">check</span>}
+                                                            </div>
+                                                            <span className={`text-xs font-bold uppercase tracking-wider ${active ? "text-white font-black" : "text-neutral-700"}`}>
+                                                                {bucket.label}
+                                                            </span>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </FilterBlock>
+
+                                    {/* Genre Filter Block */}
+                                    <FilterBlock title="Game Genres" count={activeGenres.length}>
+                                        <div className="space-y-1 pt-1 max-h-80 overflow-y-auto pr-1">
+                                            {allGenres.map(genre => {
+                                                const color = genreColor(genre);
+                                                const active = activeGenres.includes(genre);
+                                                return (
+                                                    <button 
+                                                        key={genre} 
+                                                        onClick={() => toggleGenre(genre)}
+                                                        className={`flex items-center justify-between px-3 py-2 w-full text-left border-2 transition-all ${
+                                                            active 
+                                                                ? "bg-neutral-900 text-white border-neutral-900 shadow-[2px_2px_0_#ff4500]" 
+                                                                : "bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border-transparent hover:border-neutral-300"
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-center gap-2.5 min-w-0">
+                                                            <div
+                                                                className={`w-3.5 h-3.5 rotate-45 shrink-0 transition-transform flex items-center justify-center border-2 ${active ? "scale-110" : ""}`}
+                                                                style={{
+                                                                    borderColor: color,
+                                                                    backgroundColor: active ? color : "transparent",
+                                                                }}
+                                                            >
+                                                                {active && <div className="w-1.5 h-1.5 bg-white" />}
+                                                            </div>
+                                                            <span className={`text-xs font-bold uppercase tracking-wider truncate ${active ? "text-white font-black" : "text-neutral-700"}`}>
+                                                                {genre}
+                                                            </span>
+                                                        </div>
+                                                        {active && <span className="material-symbols-outlined text-xs text-primary">check</span>}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </FilterBlock>
+
+                                    {/* Quick Store Help Note */}
+                                    <div className="mt-6 pt-5 border-t-2 border-neutral-200">
+                                        <div className="flex items-start gap-2.5 bg-primary/10 border-2 border-primary/30 p-3">
+                                            <span className="material-symbols-outlined text-primary text-base shrink-0 mt-0.5">verified_user</span>
+                                            <p className="text-[11px] font-medium text-neutral-700 leading-snug">
+                                                All digital purchases directly link to your verified player library with lifetime access.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+
+                            {/* ── PRODUCT CATALOG GRID ──────────────────────────────── */}
+                            <main className="flex-1 min-w-0 w-full">
+                                
+                                {/* Grid Toolbar */}
+                                <div className="flex flex-wrap items-center justify-between border-b-4 border-neutral-900 pb-4 mb-6 gap-4">
+                                    <span className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-600">
+                                        {loading ? "FETCHING TITLES..." : (
+                                            <>SHOWING <span className="text-neutral-900 font-black">{filtered.length}</span> GAMES</>
                                         )}
                                     </span>
-                                    {activeCount > 0 && (
-                                        <button onClick={clearAll} className="text-[9px] font-black tracking-widest uppercase text-neutral-500 hover:text-primary transition-colors">
-                                            RESET
-                                        </button>
-                                    )}
-                                </div>
 
-                                {/* Genre */}
-                                <FilterBlock title="GENRE">
-                                    {allGenres.map(genre => {
-                                        const color = genreColor(genre);
-                                        const active = activeGenres.includes(genre);
-                                        return (
-                                            <button key={genre} onClick={() => toggleGenre(genre)}
-                                                className="flex items-center gap-2.5 py-1.5 w-full text-left group"
-                                            >
-                                                {/* Diamond: colored border always; filled + white inner dot when active */}
-                                                <div
-                                                    className={`w-3.5 h-3.5 rotate-45 shrink-0 transition-all duration-150 flex items-center justify-center border-2 ${active ? "scale-125" : "group-hover:scale-110"}`}
-                                                    style={{
-                                                        borderColor: color,
-                                                        backgroundColor: active ? color : "transparent",
-                                                    }}
-                                                >
-                                                    {active && <div className="w-1.5 h-1.5 bg-white" />}
-                                                </div>
-                                                <span
-                                                    className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-150 leading-none ${active ? "font-black" : "text-neutral-500 group-hover:text-neutral-900"}`}
-                                                    style={active ? { color } : {}}
-                                                >
-                                                    {genre}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
-                                </FilterBlock>
-
-                                {/* Price */}
-                                <FilterBlock title="PRICE">
-                                    {PRICE_BUCKETS.map(bucket => {
-                                        const active = activePrices.includes(bucket.label);
-                                        return (
-                                            <button key={bucket.label} onClick={() => togglePrice(bucket.label)}
-                                                className="flex items-center gap-2.5 py-1.5 w-full text-left group"
-                                            >
-                                                <div className={`w-3.5 h-3.5 border-2 border-neutral-900 shrink-0 transition-all flex items-center justify-center shadow-[1px_1px_0_#171717] ${active ? "bg-primary" : "bg-white group-hover:bg-primary/10"}`}>
-                                                    {active && <span className="text-[8px] text-neutral-900 font-black leading-none">✓</span>}
-                                                </div>
-                                                <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors ${active ? "text-neutral-900 font-black" : "text-neutral-500 group-hover:text-neutral-800"}`}>
-                                                    {bucket.label}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
-                                </FilterBlock>
-                            </div>
-                        </aside>
-
-                        {/* ── PRODUCT GRID ─────────────────────────────────────────── */}
-                        <main className="flex-1 min-w-0">
-                            {/* Toolbar */}
-                            <div className="flex items-center justify-between border-b-4 border-neutral-900 pb-4 mb-8">
-                                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-neutral-500">
-                                    {loading ? "LOADING…" : (
-                                        <><span className="text-neutral-900 font-black">{filtered.length}</span> result{filtered.length !== 1 ? "s" : ""}</>
-                                    )}
-                                </span>
-
-                                {/* Sort */}
-                                <div className="relative" ref={sortRef}>
-                                    <button
-                                        onClick={() => setSortOpen(!sortOpen)}
-                                        className="btn-tactile flex items-center gap-1.5 text-[10px] font-black tracking-widest uppercase text-neutral-600 hover:text-neutral-900 border-4 border-neutral-900 bg-white hover:bg-neutral-100 px-3 py-1.5 shadow-[3px_3px_0_#171717] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#171717]"
-                                    >
-                                        <span className="material-symbols-outlined text-[13px]">sort</span>
-                                        {SORT_OPTIONS.find(o => o.value === sort)?.label}
-                                        <span className="material-symbols-outlined text-[13px]">{sortOpen ? "expand_less" : "expand_more"}</span>
-                                    </button>
-                                    {sortOpen && (
-                                        <div className="absolute right-0 top-full mt-1 bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500] z-50 min-w-40">
-                                            {SORT_OPTIONS.map(opt => (
-                                                <button key={opt.value} onClick={() => { setSort(opt.value); setSortOpen(false); }}
-                                                    className={`w-full text-left px-4 py-2.5 text-[10px] font-black tracking-widest uppercase transition-colors border-b-2 border-neutral-100 last:border-b-0 hover:bg-primary hover:text-neutral-900 ${sort === opt.value ? "text-primary bg-neutral-50" : "text-neutral-600"}`}
-                                                >
-                                                    {opt.label}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Active filter chips */}
-                            {activeCount > 0 && (
-                                <div className="flex flex-wrap items-center gap-2 mb-6">
-                                    <span className="text-[9px] font-black tracking-widest uppercase text-neutral-400">ACTIVE:</span>
-                                    {activeGenres.map(g => {
-                                        const chipColor = genreColor(g);
-                                        return (
-                                            <button key={g} onClick={() => toggleGenre(g)}
-                                                className="btn-tactile flex items-center gap-1.5 px-2 py-1 text-[9px] font-black tracking-widest uppercase text-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:scale-105 active:scale-95"
-                                                style={{ backgroundColor: chipColor }}
-                                            >
-                                                <div className="w-1.5 h-1.5 rotate-45 bg-white/50 border border-white/40 shrink-0" />
-                                                {g}
-                                                <span className="material-symbols-outlined text-[10px] ml-0.5 opacity-80">close</span>
-                                            </button>
-                                        );
-                                    })}
-                                    {activePrices.map(p => (
-                                        <button key={p} onClick={() => togglePrice(p)}
-                                            className="btn-tactile flex items-center gap-1 px-2 py-0.5 text-[9px] font-black tracking-widest uppercase text-neutral-900 bg-white border-2 border-primary hover:bg-primary shadow-[2px_2px_0_#ff4500] active:scale-95 transition-colors"
+                                    {/* Sort Dropdown */}
+                                    <div className="relative" ref={sortRef}>
+                                        <button
+                                            onClick={() => setSortOpen(!sortOpen)}
+                                            className="btn-tactile flex items-center gap-2 text-xs font-black tracking-wider uppercase text-neutral-800 border-3 border-neutral-900 bg-white px-4 py-2 shadow-[3px_3px_0_#171717]"
                                         >
-                                            {p} <span className="material-symbols-outlined text-[10px] ml-0.5">close</span>
+                                            <span className="material-symbols-outlined text-sm">sort</span>
+                                            {SORT_OPTIONS.find(o => o.value === sort)?.label}
+                                            <span className="material-symbols-outlined text-base">{sortOpen ? "expand_less" : "expand_more"}</span>
                                         </button>
-                                    ))}
+                                        {sortOpen && (
+                                            <div className="absolute right-0 top-full mt-2 bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#ff4500] z-50 min-w-56">
+                                                {SORT_OPTIONS.map(opt => (
+                                                    <button 
+                                                        key={opt.value} 
+                                                        onClick={() => { setSort(opt.value); setSortOpen(false); }}
+                                                        className={`w-full text-left px-4 py-3 text-xs font-black tracking-wider uppercase transition-colors border-b border-neutral-100 last:border-b-0 hover:bg-primary hover:text-neutral-900 flex items-center justify-between ${sort === opt.value ? "text-primary bg-neutral-50" : "text-neutral-700"}`}
+                                                    >
+                                                        {opt.label}
+                                                        {sort === opt.value && <span className="material-symbols-outlined text-xs">check</span>}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
 
-                            {/* Grid */}
-                            {loading ? (
-                                <LoadingSkeleton />
-                            ) : filtered.length === 0 ? (
-                                <div className="border-4 border-neutral-900 bg-white p-16 text-center shadow-[8px_8px_0_#171717]">
-                                    <div className="text-5xl font-black tracking-tighter text-neutral-200 uppercase mb-4">0 RESULTS</div>
-                                    <p className="text-neutral-400 font-bold tracking-widest uppercase text-[10px]">No titles match your filters.</p>
-                                    <button onClick={clearAll} className="btn-tactile mt-6 border-4 border-neutral-900 bg-primary px-6 py-2 text-[10px] font-black tracking-widest uppercase text-neutral-900 hover:shadow-[6px_6px_0_#171717] shadow-[4px_4px_0_#171717] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717]">
-                                        CLEAR FILTERS
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                    {filtered.map((game, i) => (
-                                        <GameCard key={game.id} game={game} index={i} />
-                                    ))}
-                                </div>
-                            )}
-                        </main>
+                                {/* Active Filter Pills */}
+                                {activeCount > 0 && (
+                                    <div className="flex flex-wrap items-center gap-2 mb-6 p-3 bg-neutral-100 border-2 border-neutral-300">
+                                        <span className="text-[11px] font-black tracking-wider uppercase text-neutral-500 mr-1">ACTIVE:</span>
+                                        {activeGenres.map(g => {
+                                            const chipColor = genreColor(g);
+                                            return (
+                                                <button key={g} onClick={() => toggleGenre(g)}
+                                                    className="btn-tactile flex items-center gap-1.5 px-3 py-1 text-xs font-black tracking-wider uppercase text-white border-2 border-neutral-900 shadow-[2px_2px_0_#171717] hover:scale-105 active:scale-95"
+                                                    style={{ backgroundColor: chipColor }}
+                                                >
+                                                    <div className="w-2 h-2 rotate-45 bg-white/60 border border-white/40 shrink-0" />
+                                                    {g}
+                                                    <span className="material-symbols-outlined text-xs ml-1">close</span>
+                                                </button>
+                                            );
+                                        })}
+                                        {activePrices.map(p => (
+                                            <button key={p} onClick={() => togglePrice(p)}
+                                                className="btn-tactile flex items-center gap-1.5 px-3 py-1 text-xs font-black tracking-wider uppercase text-neutral-900 bg-white border-2 border-primary shadow-[2px_2px_0_#ff4500] hover:bg-primary active:scale-95 transition-colors"
+                                            >
+                                                {p} <span className="material-symbols-outlined text-xs ml-1">close</span>
+                                            </button>
+                                        ))}
+                                        <button onClick={clearAll} className="btn-tactile ml-auto text-xs font-black tracking-wider uppercase text-neutral-500 hover:text-primary underline">
+                                            Clear All
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Results Grid */}
+                                {loading ? (
+                                    <LoadingSkeleton />
+                                ) : filtered.length === 0 ? (
+                                    <div className="border-4 border-neutral-900 bg-white p-14 text-center shadow-[8px_8px_0_#171717]">
+                                        <div className="w-16 h-16 bg-neutral-100 border-2 border-neutral-900 mx-auto mb-4 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-3xl text-neutral-400">search_off</span>
+                                        </div>
+                                        <h2 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-2">No Games Found</h2>
+                                        <p className="text-neutral-500 font-medium text-sm mb-6 max-w-sm mx-auto">
+                                            We couldn't find any games matching your current active filters. Try resetting the filters or searching a different term.
+                                        </p>
+                                        <button onClick={clearAll} className="btn-tactile border-4 border-neutral-900 bg-primary px-8 py-3 text-xs font-black tracking-wider uppercase text-neutral-900 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
+                                            RESET ALL FILTERS
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {filtered.map((game, i) => (
+                                            <GameCard key={game.id} game={game} index={i} />
+                                        ))}
+                                    </div>
+                                )}
+                            </main>
+                        </div>
                     </div>
                 </>
             )}
@@ -657,17 +751,33 @@ export default function StoreCatalog() {
     );
 }
 
-
-// ── FilterBlock ──────────────────────────────────────────────────────────────
-function FilterBlock({ title, children }) {
+// ── FilterBlock Component ────────────────────────────────────────────────────
+function FilterBlock({ title, count, children }) {
     const [open, setOpen] = useState(true);
     return (
-        <div className="mb-6 border-b-4 border-neutral-900 pb-5">
-            <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between mb-3 group">
-                <span className="text-[9px] font-black tracking-widest uppercase text-neutral-500 group-hover:text-neutral-900 transition-colors">{title}</span>
-                <span className="material-symbols-outlined text-neutral-400 text-[16px] group-hover:text-primary transition-colors">{open ? "remove" : "add"}</span>
+        <div className="mb-5 border-b-2 border-neutral-200 pb-4 last:border-0 last:pb-0 last:mb-0">
+            <button 
+                onClick={() => {
+                    playMechanicalClick(750, 0.12);
+                    setOpen(!open);
+                }} 
+                className="w-full flex items-center justify-between mb-2 group text-left"
+            >
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-black tracking-wider uppercase text-neutral-800 group-hover:text-primary transition-colors">
+                        {title}
+                    </span>
+                    {count !== undefined && count > 0 && (
+                        <span className="text-[10px] font-mono font-bold bg-primary/20 text-primary border border-primary/40 px-1.5 py-0.2">
+                            {count}
+                        </span>
+                    )}
+                </div>
+                <span className="material-symbols-outlined text-neutral-400 text-base group-hover:text-primary transition-colors">
+                    {open ? "expand_less" : "expand_more"}
+                </span>
             </button>
-            {open && <div className="flex flex-col gap-0.5">{children}</div>}
+            {open && <div>{children}</div>}
         </div>
     );
 }
@@ -677,6 +787,7 @@ function GameSection({ title, subtitle, icon, games, accentColor = "#ff4500" }) 
     const scrollRef = useRef(null);
 
     const scroll = (direction) => {
+        playMechanicalClick(900, 0.1);
         if (scrollRef.current) {
             const scrollAmount = 400;
             scrollRef.current.scrollBy({
@@ -687,7 +798,7 @@ function GameSection({ title, subtitle, icon, games, accentColor = "#ff4500" }) 
     };
 
     return (
-        <div className="px-8 md:px-12">
+        <div className="px-6 md:px-12">
             {/* Section Header */}
             <div className="flex items-end justify-between mb-6 border-b-4 border-neutral-900 pb-4">
                 <div className="flex items-center gap-4">
@@ -697,7 +808,7 @@ function GameSection({ title, subtitle, icon, games, accentColor = "#ff4500" }) 
                     </div>
                     <div>
                         <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase leading-none">{title}</h2>
-                        <p className="text-[9px] font-bold tracking-widest uppercase text-neutral-500 mt-1">{subtitle}</p>
+                        <p className="text-xs font-bold tracking-wider uppercase text-neutral-500 mt-1">{subtitle}</p>
                     </div>
                 </div>
                 
@@ -733,64 +844,60 @@ function GameSection({ title, subtitle, icon, games, accentColor = "#ff4500" }) 
 
 // ── HorizontalGameCard: For scrolling sections ───────────────────────────────
 function HorizontalGameCard({ game, accentColor, index }) {
-    const genres = game.genres ?? [];
     const rating = game.rating ? Math.round(game.rating) : null;
 
     return (
         <Link
             href={`/store/${game.id}`}
-            className="card-lift group shrink-0 w-60 snap-start flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717]"
-            style={{ 
-                animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`,
-                boxShadow: `6px 6px 0 #171717`
-            }}
+            onClick={() => playMechanicalClick()}
+            onMouseEnter={() => playHoverTick()}
+            className="card-lift group shrink-0 w-64 snap-start flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717] relative"
         >
+            <span className="absolute top-1.5 left-2 text-neutral-400 font-mono text-xs pointer-events-none select-none z-10">+</span>
+            <span className="absolute top-1.5 right-2 text-neutral-400 font-mono text-xs pointer-events-none select-none z-10">+</span>
+
             {/* Cover */}
-            <div className="aspect-3/4 bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden">
+            <div className="aspect-[3/4] bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden">
                 <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-108"
                     style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : "none") }}
                 />
                 
                 {/* Rating badge */}
                 {rating > 0 && (
-                    <div className="absolute top-2 right-2 border-2 border-neutral-900 px-2 py-1 flex items-center gap-1 backdrop-blur-sm" 
+                    <div className="absolute top-2 right-2 border-2 border-neutral-900 px-2 py-0.5 flex items-center gap-1 backdrop-blur-sm" 
                         style={{ backgroundColor: accentColor }}>
-                        <span className="text-[9px] font-black font-mono text-neutral-900 tabular-nums">{rating}</span>
+                        <span className="text-xs font-black font-mono text-neutral-900 tabular-nums">★ {rating}</span>
                     </div>
                 )}
 
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                     <div className="w-full flex items-center justify-between text-white">
-                        <span className="text-[9px] font-black tracking-widest uppercase">View Details</span>
+                        <span className="text-xs font-black tracking-wider uppercase">VIEW DETAILS</span>
                         <span className="material-symbols-outlined text-base">arrow_forward</span>
                     </div>
                 </div>
-
-                {!game.cover && !game.bg && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-5xl text-neutral-400">videogame_asset</span>
-                    </div>
-                )}
             </div>
 
             {/* Info */}
-            <div className="p-4 flex flex-col gap-2 flex-1">
-                <h3 className="text-sm font-black uppercase tracking-tight text-neutral-900 leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                    {game.title}
-                </h3>
-                <p className="text-[8px] font-bold tracking-widest uppercase text-neutral-400 truncate">
-                    {game.developer ?? "Unknown Studio"}
-                </p>
+            <div className="p-4 flex flex-col gap-1.5 flex-1 justify-between">
+                <div>
+                    <h3 className="text-base font-black uppercase tracking-tight text-neutral-900 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {game.title}
+                    </h3>
+                    <p className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 truncate mt-0.5">
+                        {game.developer ?? "Verified Studio"}
+                    </p>
+                </div>
 
                 {/* Price */}
                 <div className="flex items-center justify-between mt-auto pt-3 border-t-2 border-neutral-200">
                     <span className="text-base font-black font-mono text-neutral-900 tabular-nums">
                         {game.price === 0 ? "FREE" : `$${(game.price ?? 0).toFixed(2)}`}
                     </span>
-                    <div className="w-8 h-8 border-2 border-neutral-900 flex items-center justify-center" style={{ backgroundColor: accentColor }}>
-                        <span className="material-symbols-outlined text-base text-neutral-900">add_shopping_cart</span>
+                    <div className="w-8 h-8 border-2 border-neutral-900 flex items-center justify-center shadow-[2px_2px_0_#000]" style={{ backgroundColor: accentColor }}>
+                        <span className="material-symbols-outlined text-base text-neutral-900">shopping_cart</span>
                     </div>
                 </div>
             </div>
@@ -798,7 +905,7 @@ function HorizontalGameCard({ game, accentColor, index }) {
     );
 }
 
-// ── GameCard ─────────────────────────────────────────────────────────────────
+// ── GameCard: For Main Catalog Grid ──────────────────────────────────────────
 function GameCard({ game, index }) {
     const genres = game.genres ?? [];
     const rating = game.rating ? Math.round(game.rating) : null;
@@ -806,71 +913,70 @@ function GameCard({ game, index }) {
     return (
         <Link
             href={`/store/${game.id}`}
-            className="card-lift group flex flex-col bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#171717] hover:shadow-[14px_14px_0_#ff4500]"
+            onClick={() => playMechanicalClick()}
+            onMouseEnter={() => playHoverTick()}
+            className="card-lift group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[12px_12px_0_#ff4500] relative"
         >
+            <span className="absolute top-1.5 left-2 text-neutral-400 font-mono text-xs pointer-events-none select-none z-10">+</span>
+            <span className="absolute top-1.5 right-2 text-neutral-400 font-mono text-xs pointer-events-none select-none z-10">+</span>
+
             {/* Cover */}
-            <div className="aspect-3/4 bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden">
+            <div className="aspect-[3/4] bg-neutral-200 border-b-4 border-neutral-900 relative overflow-hidden">
                 <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 mix-blend-multiply"
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                     style={{ backgroundImage: game.cover ? `url(${game.cover})` : (game.bg ? `url(${game.bg})` : "none") }}
                 />
 
                 {/* Rating badge */}
                 {rating > 0 && (
-                    <div className="absolute top-3 right-3 bg-neutral-900 border-2 border-neutral-900 px-2 py-0.5 flex items-center gap-1 shadow-[2px_2px_0_#ff4500]">
-                        <div className="w-1.5 h-1.5 rotate-45 bg-primary shrink-0" />
-                        <span className="text-[9px] font-black font-mono text-white tabular-nums">{rating}</span>
-                    </div>
-                )}
-
-                {!game.cover && !game.bg && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-5xl text-neutral-400">videogame_asset</span>
+                    <div className="absolute top-3 right-3 bg-neutral-900 border-2 border-neutral-900 px-2.5 py-0.5 flex items-center gap-1 shadow-[2px_2px_0_#ff4500]">
+                        <span className="text-primary text-xs">★</span>
+                        <span className="text-xs font-black font-mono text-white tabular-nums">{rating}</span>
                     </div>
                 )}
             </div>
 
             {/* Text zone */}
-            <div className="p-4 flex flex-col gap-1.5 flex-1">
-                <h3 className="text-[13px] font-black uppercase tracking-wide text-neutral-900 leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                    {game.title}
-                </h3>
-                <p className="text-[9px] font-bold tracking-widest uppercase text-neutral-400 truncate">
-                    {game.developer ?? "Unknown Studio"}
-                </p>
-
-                {/* Genre pills */}
-                {genres.length > 0 && (
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                        {genres.slice(0, 2).map((genre, i) => {
-                            const color = genreColor(genre);
-                            return (
-                                <div key={i} className="flex items-center gap-1 border-2 border-neutral-900 px-1.5 py-0.5 shadow-[1px_1px_0_#171717]" style={{ backgroundColor: color }}>
-                                    <div className="w-1.5 h-1.5 rotate-45 bg-white/40 border border-white/30 shrink-0" />
-                                    <span className="text-[8px] font-black tracking-widest uppercase text-white leading-none whitespace-nowrap">{genre}</span>
-                                </div>
-                            );
-                        })}
+            <div className="p-4 flex flex-col gap-2 flex-1 justify-between">
+                <div>
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider">
+                            #GV-{(game.id || "00").slice(-4).toUpperCase()}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-300 px-1.5 py-0.2 uppercase">
+                            DIGITAL KEY
+                        </span>
                     </div>
-                )}
+                    <h3 className="text-base font-black uppercase tracking-tight text-neutral-900 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {game.title}
+                    </h3>
+                    <p className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 truncate mt-0.5">
+                        {game.developer ?? "Verified Studio"}
+                    </p>
 
-                {/* Rating bar */}
-                {rating > 0 && (
-                    <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 h-1 bg-neutral-200 relative overflow-hidden">
-                            <div className="absolute inset-y-0 left-0 bg-primary" style={{ width: `${Math.min(rating, 100)}%` }} />
+                    {/* Genre pills */}
+                    {genres.length > 0 && (
+                        <div className="flex items-center gap-1.5 flex-wrap mt-2">
+                            {genres.slice(0, 2).map((genre, i) => {
+                                const color = genreColor(genre);
+                                return (
+                                    <div key={i} className="flex items-center gap-1 border border-neutral-900 px-1.5 py-0.5 shadow-[1px_1px_0_#171717]" style={{ backgroundColor: color }}>
+                                        <div className="w-1.5 h-1.5 rotate-45 bg-white/60 border border-white/40 shrink-0" />
+                                        <span className="text-[10px] font-black tracking-wider uppercase text-white leading-none whitespace-nowrap">{genre}</span>
+                                    </div>
+                                );
+                            })}
                         </div>
-                        <span className="text-[8px] font-mono font-bold text-neutral-400 tabular-nums">{rating}%</span>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                {/* Price */}
-                <div className="flex items-center justify-between mt-auto pt-3 border-t-4 border-neutral-900">
-                    <span className="text-[15px] font-black font-mono text-neutral-900 tabular-nums">
+                {/* Price & Action */}
+                <div className="flex items-center justify-between mt-auto pt-3 border-t-2 border-neutral-200">
+                    <span className="text-lg font-black font-mono text-neutral-900 tabular-nums">
                         {game.price === 0 ? "FREE" : `$${(game.price ?? 0).toFixed(2)}`}
                     </span>
-                    <span className="material-symbols-outlined text-[16px] text-neutral-300 group-hover:text-primary transition-colors">
-                        arrow_forward
+                    <span className="btn-tactile bg-neutral-900 group-hover:bg-primary text-white group-hover:text-neutral-900 border-2 border-neutral-900 px-3 py-1 text-xs font-black tracking-wider uppercase flex items-center gap-1 transition-colors">
+                        VIEW <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </span>
                 </div>
             </div>
@@ -881,20 +987,17 @@ function GameCard({ game, index }) {
 // ── Loading skeleton ─────────────────────────────────────────────────────────
 function LoadingSkeleton() {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="flex flex-col bg-white border-4 border-neutral-900 shadow-[8px_8px_0_#171717] animate-pulse">
-                    <div className="aspect-3/4 bg-neutral-200 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent -translate-y-full animate-[scanline_2s_infinite]" />
-                    </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] animate-pulse">
+                    <div className="aspect-[3/4] bg-neutral-200 relative overflow-hidden" />
                     <div className="p-4 flex flex-col gap-2">
-                        <div className="h-3 bg-neutral-200 w-3/4" />
-                        <div className="h-2 bg-neutral-100 w-1/2" />
-                        <div className="h-2 bg-neutral-100 w-1/3 mt-2" />
+                        <div className="h-4 bg-neutral-200 w-3/4" />
+                        <div className="h-3 bg-neutral-100 w-1/2" />
+                        <div className="h-4 bg-neutral-200 w-1/3 mt-2" />
                     </div>
                 </div>
             ))}
         </div>
     );
 }
-

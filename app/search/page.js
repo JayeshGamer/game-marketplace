@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { playMechanicalClick, playHoverTick } from "@/lib/sound";
 
 // Genre colors matching store page
 const GENRE_COLORS = {
@@ -169,8 +170,14 @@ export default function SearchResults() {
                             <Link 
                                 key={game.id} 
                                 href={`/store/${game.id}`}
-                                className="card-lift group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#ff4500]"
+                                onClick={() => playMechanicalClick()}
+                                onMouseEnter={() => playHoverTick()}
+                                className="card-lift group flex flex-col bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#ff4500] relative"
                                 style={{ animation: `fadeIn 0.4s ease-out ${i * 0.05}s both` }}>
+                                {/* Corner Crosshairs */}
+                                <span className="absolute top-1 left-2 text-neutral-400 font-mono text-[9px] pointer-events-none select-none z-10">+</span>
+                                <span className="absolute top-1 right-2 text-neutral-400 font-mono text-[9px] pointer-events-none select-none z-10">+</span>
+
                                 <div className="relative aspect-square overflow-hidden bg-neutral-200 border-b-4 border-neutral-900">
                                     {game.cover ? (
                                         <img 
@@ -203,6 +210,10 @@ export default function SearchResults() {
                                 </div>
                                 <div className="flex flex-col p-4 flex-grow justify-between">
                                     <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="font-mono text-[7px] tracking-widest text-neutral-400 select-none">||| | ||</span>
+                                            <span className="text-[7px] font-mono text-neutral-400 uppercase">#RADAR_{i.toString().padStart(2, "0")}</span>
+                                        </div>
                                         <h3 className="text-base font-black uppercase tracking-tight leading-tight group-hover:text-primary transition-colors line-clamp-2 mb-2">
                                             {game.title}
                                         </h3>
@@ -213,7 +224,7 @@ export default function SearchResults() {
                                         )}
                                     </div>
                                     <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-neutral-200">
-                                        <span className="text-[9px] font-black tracking-wider uppercase text-neutral-400">IGDB</span>
+                                        <span className="text-[9px] font-black tracking-wider uppercase text-neutral-400">IGDB DECRYPTED</span>
                                         <span className="material-symbols-outlined text-neutral-300 group-hover:text-primary transition-colors">open_in_new</span>
                                     </div>
                                 </div>

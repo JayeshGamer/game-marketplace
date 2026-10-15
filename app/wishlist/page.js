@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { playMechanicalClick, playHoverTick, playUplinkChirp } from "@/lib/sound";
 
 // ── Genre colour palette ─────────────────────────────────────────────────────
 const GENRE_COLORS = {
@@ -71,6 +72,7 @@ export default function WishlistPage() {
 
     const removeFromWishlist = async (gameId) => {
         if (!user) return;
+        playMechanicalClick(550, 0.2);
         setRemoving(gameId);
         try {
             const ref = doc(db, "users", user.uid);
@@ -86,6 +88,7 @@ export default function WishlistPage() {
 
     const clearWishlist = async () => {
         if (!user || !confirm("Clear entire wishlist?")) return;
+        playMechanicalClick(650, 0.2);
         try {
             const ref = doc(db, "users", user.uid);
             await setDoc(ref, { wishlist: [] }, { merge: true });
@@ -125,10 +128,10 @@ export default function WishlistPage() {
                     </div>
                     <h2 className="text-2xl font-black uppercase tracking-tight text-neutral-900 mb-2">Sign In Required</h2>
                     <p className="text-neutral-600 text-xs font-bold uppercase tracking-widest mb-8 leading-relaxed">
-                        Access to your archived wishlist titles requires operator authorization.
+                        Sign in to your account to view and manage your saved games wishlist.
                     </p>
                     <Link href="/login" className="btn-tactile inline-flex items-center justify-center gap-2 w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-3.5 font-black tracking-[0.2em] uppercase text-xs shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
-                        Sign In
+                        Sign In Now
                     </Link>
                 </div>
             </div>
@@ -293,13 +296,19 @@ export default function WishlistPage() {
                                         <div className="flex gap-1.5">
                                             {!inCart ? (
                                                 <button
-                                                    onClick={() => addToCart(game)}
+                                                    onClick={() => {
+                                                        playUplinkChirp();
+                                                        addToCart(game);
+                                                    }}
+                                                    onMouseEnter={() => playHoverTick()}
                                                     className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-primary hover:bg-neutral-900 text-neutral-900 hover:text-primary shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#171717]"
                                                     title="Add to Cart">
                                                     <span className="material-symbols-outlined text-[18px] font-bold transition-transform group-hover:rotate-12">add_shopping_cart</span>
                                                 </button>
                                             ) : (
                                                 <Link href="/cart"
+                                                    onClick={() => playMechanicalClick()}
+                                                    onMouseEnter={() => playHoverTick()}
                                                     className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-neutral-200 text-neutral-900 shadow-[2px_2px_0_#171717] hover:bg-primary"
                                                     title="In Cart">
                                                     <span className="material-symbols-outlined text-[18px] font-bold">shopping_cart</span>
@@ -307,6 +316,7 @@ export default function WishlistPage() {
                                             )}
                                             <button
                                                 onClick={() => removeFromWishlist(game.id)}
+                                                onMouseEnter={() => playHoverTick()}
                                                 disabled={removing === game.id}
                                                 className="btn-tactile size-9 flex items-center justify-center border-2 border-neutral-900 bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-neutral-900 shadow-[2px_2px_0_#171717] hover:shadow-[3px_3px_0_#dc2626] disabled:opacity-50"
                                                 title="Remove from Wishlist">

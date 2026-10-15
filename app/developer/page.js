@@ -1,19 +1,25 @@
 "use client";
 
 import SyncButton from "@/components/SyncButton";
+import { playMechanicalClick, playHoverTick, playUplinkChirp } from "@/lib/sound";
 
 export default function DeveloperDashboard() {
     return (
         <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-40 px-12 pb-24 font-display max-w-7xl mx-auto flex flex-col">
             <div className="flex flex-col md:flex-row items-center justify-between border-b-4 border-neutral-900 pb-8 mb-12 gap-6 md:gap-0">
-                <div className="bg-white border-4 border-neutral-900 p-6 shadow-[8px_8px_0_#171717] w-full md:w-auto">
+                <div className="bg-white border-4 border-neutral-900 p-6 shadow-[8px_8px_0_#171717] w-full md:w-auto relative">
+                    <span className="absolute top-1 left-2 text-neutral-400 font-mono text-[9px] pointer-events-none select-none">+</span>
                     <span className="text-[12px] bg-neutral-900 text-white px-2 py-1 font-black tracking-[0.4em] uppercase mb-4 border-2 border-neutral-900 inline-block">Developer Portal</span>
                     <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">The Forge</h1>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
                     <SyncButton />
-                    <button className="btn-tactile w-full md:w-auto bg-primary border-4 border-neutral-900 text-neutral-900 hover:bg-orange-600 px-8 py-4 text-[12px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#171717] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] flex items-center justify-center gap-3">
+                    <button 
+                        onClick={() => playUplinkChirp()}
+                        onMouseEnter={() => playHoverTick()}
+                        className="btn-tactile w-full md:w-auto bg-primary border-4 border-neutral-900 text-neutral-900 hover:bg-orange-600 px-8 py-4 text-[12px] font-black tracking-[0.2em] uppercase shadow-[4px_4px_0_#171717] hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#171717] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#171717] flex items-center justify-center gap-3"
+                    >
                         <span className="material-symbols-outlined text-lg font-black">upload</span>
                         Upload Build
                     </button>

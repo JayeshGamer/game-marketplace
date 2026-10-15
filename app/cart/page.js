@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
+import { playMechanicalClick, playHoverTick, playUplinkChirp } from "@/lib/sound";
 
 // ── Genre colour palette ─────────────────────────────────────────────────────
 const GENRE_COLORS = {
@@ -46,6 +47,7 @@ export default function ShoppingCart() {
     const total = subtotal + taxes;
 
     const handleRemove = async (id) => {
+        playMechanicalClick(550, 0.2);
         setRemovingId(id);
         await removeFromCart(id);
         setRemovingId(null);
@@ -53,18 +55,18 @@ export default function ShoppingCart() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6 font-display">
                 <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
                         <div className="w-3 h-3 bg-primary animate-ping" />
-                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">VERIFYING TRANSACTION QUEUE</span>
+                        <span className="text-xs font-mono font-black tracking-wider uppercase text-neutral-900">CHECKING YOUR CART</span>
                     </div>
                     <div className="space-y-4">
                         <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
                         <div className="h-12 bg-neutral-100 animate-pulse border-2 border-neutral-300" />
-                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
-                            <span>CALCULATING TOTALS...</span>
-                            <span className="text-primary font-black animate-pulse">SYNCING</span>
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-xs font-mono text-neutral-500 uppercase tracking-wider">
+                            <span>PREPARING ORDER...</span>
+                            <span className="text-primary font-black animate-pulse">READY</span>
                         </div>
                     </div>
                 </div>
@@ -73,7 +75,7 @@ export default function ShoppingCart() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-40 px-6 md:px-12 pb-24 max-w-7xl mx-auto relative overflow-x-hidden">
+        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-36 px-6 md:px-12 pb-24 max-w-7xl mx-auto relative overflow-x-hidden">
             {/* Diagonal stripe pattern background */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.02] -z-10"
                 style={{
@@ -84,64 +86,29 @@ export default function ShoppingCart() {
 
             {/* Decorative geometric shapes and patterns */}
             <div className="absolute inset-0 pointer-events-none -z-10">
-                {/* Halftone dots - more visible */}
                 <div className="absolute inset-0" style={{
                     backgroundImage: `radial-gradient(circle, #cbd5e1 2px, transparent 2px)`,
                     backgroundSize: '32px 32px',
                     opacity: 0.35
                 }}></div>
-                
-                {/* Orange accent diagonal lines */}
-                <div className="absolute inset-0" style={{
-                    backgroundImage: `repeating-linear-gradient(
-                        45deg,
-                        transparent,
-                        transparent 35px,
-                        #fef3c7 35px,
-                        #fef3c7 37px
-                    )`,
-                    opacity: 0.25
-                }}></div>
-                
-                {/* Large organic blob shapes */}
-                <div className="absolute -top-32 -right-32 w-[500px] h-[300px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-[14px] border-orange-200/40"></div>
-                <div className="absolute top-[15%] -left-40 w-[400px] h-[400px] rounded-full border-[16px] border-slate-200/50"></div>
-                <div className="absolute bottom-[20%] right-[10%] w-[350px] h-[250px] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-[12px] border-orange-200/35"></div>
-                <div className="absolute -bottom-40 left-[15%] w-[450px] h-[350px] rounded-[70%_30%_50%_50%/30%_60%_40%_70%] border-[14px] border-slate-200/45"></div>
-                
-                {/* Medium geometric shapes */}
-                <div className="absolute top-[40%] right-[25%] w-32 h-32 border-[6px] border-orange-300/30 rotate-45"></div>
-                <div className="absolute top-[25%] left-[35%] w-28 h-28 rounded-full border-[6px] border-slate-300/40"></div>
-                <div className="absolute bottom-[45%] left-[20%] w-36 h-36 border-[6px] border-orange-200/25 -rotate-12"></div>
-                
-                {/* Small accent dots */}
-                <div className="absolute top-[18%] right-[15%] w-3 h-3 bg-orange-300/40 rounded-full"></div>
-                <div className="absolute top-[62%] left-[12%] w-4 h-4 bg-slate-300/45 rounded-full"></div>
-                <div className="absolute bottom-[28%] right-[30%] w-3 h-3 bg-orange-300/35 rounded-full"></div>
-                <div className="absolute top-[75%] right-[18%] w-3.5 h-3.5 bg-slate-300/40 rounded-full"></div>
-                <div className="absolute bottom-[52%] left-[45%] w-3 h-3 bg-orange-300/30 rounded-full"></div>
             </div>
 
             <div className="relative z-10">
-                <div className="mb-10" style={{ animation: 'slideInLeft 0.6s ease-out' }}>
-                    <div className="flex items-center gap-4 mb-6">
+                <div className="mb-10">
+                    <div className="flex items-center gap-4 mb-4">
                         <DiamondIcon color="#ff4500" size={24} />
-                        <div className="flex flex-col gap-1">
-                            <div className="w-12 h-1 bg-primary" style={{ animation: 'expandWidth 0.5s ease-out' }}></div>
-                            <div className="w-8 h-1 bg-neutral-900" style={{ animation: 'expandWidth 0.5s ease-out 0.1s both' }}></div>
-                        </div>
-                        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight font-display">
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight font-display">
                             Shopping Cart
                         </h1>
                     </div>
-                    <div className="flex items-center gap-3 ml-16 text-[10px] tracking-[0.3em] uppercase">
+                    <div className="flex items-center gap-3 text-xs font-mono font-bold uppercase tracking-wider">
                         <div className="flex items-center gap-2 px-3 py-1.5 border-2 border-neutral-900 bg-white">
                             <div className="w-2 h-2 bg-primary animate-pulse"></div>
-                            <span className="font-black text-neutral-900">{cartItems.length} ITEMS QUEUED</span>
+                            <span className="font-black text-neutral-900">{cartItems.length} {cartItems.length === 1 ? "GAME" : "GAMES"} IN CART</span>
                         </div>
                         {cartItems.length > 0 && (
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900 text-primary">
-                                <span className="font-black">${subtotal.toFixed(2)} TOTAL</span>
+                                <span className="font-black">${subtotal.toFixed(2)} SUBTOTAL</span>
                             </div>
                         )}
                     </div>
@@ -151,21 +118,16 @@ export default function ShoppingCart() {
                     {/* Cart Items List */}
                     <div className="flex-1 space-y-4">
                         {cartItems.length === 0 ? (
-                            <div className="p-20 border-4 border-neutral-900 bg-white shadow-[12px_12px_0_#171717] text-center flex flex-col items-center justify-center relative overflow-hidden"
-                                style={{ animation: 'fadeInScale 0.5s ease-out 0.3s both' }}>
-                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-                                <span className="material-symbols-outlined text-[80px] text-neutral-300 mb-8" style={{ animation: 'float 3s ease-in-out infinite' }}>shopping_cart</span>
-                                <h2 className="text-3xl font-display font-black uppercase tracking-wider text-neutral-900 mb-3">Cart Empty</h2>
-                                <p className="text-neutral-500 font-black tracking-[0.25em] uppercase text-[10px] mb-12">NO ITEMS IN QUEUE</p>
-                                <Link href="/store" className="btn-tactile group relative bg-primary border-4 border-neutral-900 text-neutral-900 px-12 py-6 font-black tracking-[0.25em] uppercase text-sm shadow-[6px_6px_0_#171717] hover:shadow-[10px_10px_0_#171717] overflow-hidden">
-                                    <span className="relative z-10 flex items-center gap-3">
-                                        Browse Store
-                                        <span className="material-symbols-outlined text-lg transition-transform group-hover:translate-x-2">arrow_forward</span>
-                                    </span>
-                                    <div className="absolute inset-0 bg-neutral-900 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-                                    <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 text-primary transition-opacity z-10 font-black tracking-[0.25em]">
-                                        BROWSE STORE →
-                                    </span>
+                            <div className="p-16 border-4 border-neutral-900 bg-white shadow-[10px_10px_0_#171717] text-center flex flex-col items-center justify-center relative overflow-hidden">
+                                <div className="w-20 h-20 bg-neutral-100 border-2 border-neutral-900 mx-auto mb-6 flex items-center justify-center shadow-[3px_3px_0_#ff4500]">
+                                    <span className="material-symbols-outlined text-4xl text-neutral-400">shopping_cart</span>
+                                </div>
+                                <h2 className="text-3xl font-display font-black uppercase tracking-wider text-neutral-900 mb-2">Your Cart is Empty</h2>
+                                <p className="text-neutral-500 font-medium text-sm mb-8 max-w-sm">
+                                    You don't have any games saved in your cart yet. Explore our featured store titles and special offers.
+                                </p>
+                                <Link href="/store" className="btn-tactile bg-primary border-4 border-neutral-900 text-neutral-900 px-10 py-4 font-black tracking-wider uppercase text-xs shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
+                                    EXPLORE STORE CATALOG →
                                 </Link>
                             </div>
                         ) : (
@@ -213,29 +175,29 @@ export default function ShoppingCart() {
                                                     <div className="w-0 h-0.5 transition-all group-hover/link:w-full mt-1" style={{ backgroundColor: accentColor }}></div>
                                                 </Link>
                                                 <div className="flex flex-col items-end gap-0.5">
-                                                    <span className="text-[7px] font-black tracking-[0.2em] uppercase text-neutral-400">PRICE</span>
+                                                    <span className="text-xs font-mono font-bold uppercase text-neutral-400">PRICE</span>
                                                     <span className="text-lg font-mono font-black text-neutral-900">${(item.price || 0).toFixed(2)}</span>
                                                 </div>
                                             </div>
                                             {item.developer && (
                                                 <div className="flex items-center gap-2 mt-2">
-                                                    <div className="w-1 h-1" style={{ backgroundColor: accentColor }}></div>
-                                                    <p className="text-[9px] font-black tracking-[0.2em] uppercase text-neutral-500 line-clamp-1">{item.developer}</p>
+                                                    <div className="w-1.5 h-1.5" style={{ backgroundColor: accentColor }}></div>
+                                                    <p className="text-xs font-mono font-bold tracking-wider uppercase text-neutral-500 line-clamp-1">{item.developer}</p>
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="flex justify-between items-center text-[11px] font-bold tracking-widest uppercase text-neutral-900 mt-2">
-                                            <div className="flex items-center gap-3">
-                                                <span className="hidden md:inline font-black tracking-[0.3em] text-[9px]">QTY:</span>
-                                                <div className="flex items-center border-[3px] border-neutral-900 bg-neutral-100 shadow-[2px_2px_0_#171717]">
-                                                    <span className="px-4 font-mono bg-white py-1 text-base font-black">1</span>
+                                        <div className="flex justify-between items-center text-xs font-bold tracking-wider uppercase text-neutral-900 mt-2">
+                                            <div className="flex items-center gap-2">
+                                                <span className="hidden md:inline font-mono font-bold text-xs text-neutral-500">DIGITAL LICENSE:</span>
+                                                <div className="flex items-center border-2 border-neutral-900 bg-neutral-100 shadow-[2px_2px_0_#171717]">
+                                                    <span className="px-3 font-mono bg-white py-0.5 text-xs font-black">1 KEY</span>
                                                 </div>
                                             </div>
                                             <button
                                                 onClick={() => handleRemove(item.id)}
                                                 disabled={removingId === item.id}
-                                                className="btn-tactile group/btn flex items-center gap-1.5 px-3 py-1.5 border-2 border-neutral-900 bg-white hover:border-neutral-900 hover:bg-red-600 hover:text-white uppercase font-black text-[9px] tracking-[0.25em] disabled:opacity-50 shadow-[2px_2px_0_#171717]"
+                                                className="btn-tactile group/btn flex items-center gap-1.5 px-3 py-1.5 border-2 border-neutral-900 bg-white hover:border-neutral-900 hover:bg-red-600 hover:text-white uppercase font-black text-xs tracking-wider disabled:opacity-50 shadow-[2px_2px_0_#171717]"
                                             >
                                                 <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:rotate-12">{removingId === item.id ? "hourglass_empty" : "delete"}</span>
                                                 {removingId === item.id ? "REMOVING..." : "REMOVE"}
@@ -250,42 +212,46 @@ export default function ShoppingCart() {
 
                     {/* Action / Summary Sidebar */}
                     {cartItems.length > 0 && (
-                        <div className="w-full lg:w-80 shrink-0" style={{ animation: 'fadeIn 0.7s ease-out 0.4s both' }}>
-                            <div className="sticky top-32 bg-white border-4 border-neutral-900 p-5 shadow-[8px_8px_0_#ff4500] relative overflow-hidden group/summary">
+                        <div className="w-full lg:w-84 shrink-0" style={{ animation: 'fadeIn 0.7s ease-out 0.4s both' }}>
+                            <div className="sticky top-32 bg-white border-4 border-neutral-900 p-6 shadow-[8px_8px_0_#ff4500] relative overflow-hidden group/summary">
                                 {/* Animated corner strips */}
                                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-neutral-900 to-primary transform -translate-x-full group-hover/summary:translate-x-0 transition-transform duration-1000"></div>
                                 
-                                <h2 className="text-xl font-display font-black tracking-[0.15em] uppercase mb-6 text-neutral-900 flex items-center gap-3 relative">
+                                <h2 className="text-xl font-display font-black tracking-wider uppercase mb-6 text-neutral-900 flex items-center gap-3 relative">
                                     <DiamondIcon color="#ff4500" size={16} />
                                     Order Summary
-                                    <span className="material-symbols-outlined text-3xl ml-auto text-primary">receipt_long</span>
+                                    <span className="material-symbols-outlined text-2xl ml-auto text-primary">receipt_long</span>
                                 </h2>
 
-                                <div className="space-y-3 text-[10px] font-black tracking-[0.15em] uppercase text-neutral-600 border-b-4 border-neutral-900 pb-5 mb-5">
-                                    <div className="flex justify-between items-center p-2.5 bg-neutral-50 border-2 border-neutral-200">
-                                        <span>ITEMS ({cartItems.length})</span>
-                                        <span className="font-mono text-neutral-900 text-sm">${subtotal.toFixed(2)}</span>
+                                <div className="space-y-3 text-xs font-mono font-bold tracking-wider uppercase text-neutral-600 border-b-4 border-neutral-900 pb-5 mb-5">
+                                    <div className="flex justify-between items-center p-3 bg-neutral-50 border-2 border-neutral-200">
+                                        <span>GAMES ({cartItems.length})</span>
+                                        <span className="font-mono text-neutral-900 text-sm font-black">${subtotal.toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between items-center text-primary bg-primary/10 p-2.5 border-2 border-primary relative overflow-hidden group/disco">
+                                    <div className="flex justify-between items-center text-primary bg-primary/10 p-3 border-2 border-primary relative overflow-hidden group/disco">
                                         <span>DISCOUNT</span>
                                         <span className="font-mono font-black text-sm">-$0.00</span>
                                         <div className="absolute inset-0 bg-primary/20 transform -translate-x-full group-hover/disco:translate-x-full transition-transform duration-500"></div>
                                     </div>
-                                    <div className="flex justify-between items-center p-2.5 bg-neutral-50 border-2 border-neutral-200">
+                                    <div className="flex justify-between items-center p-3 bg-neutral-50 border-2 border-neutral-200">
                                         <span>TAXES (EST.)</span>
-                                        <span className="font-mono text-neutral-900 text-sm">${taxes.toFixed(2)}</span>
+                                        <span className="font-mono text-neutral-900 text-sm font-black">${taxes.toFixed(2)}</span>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-between items-center text-[11px] font-black tracking-[0.2em] uppercase text-neutral-900 mb-6 bg-gradient-to-r from-neutral-100 to-neutral-50 p-4 border-4 border-neutral-900 relative overflow-hidden">
-                                    <span>TOTAL</span>
-                                    <span className="text-4xl font-mono text-neutral-900 relative">
-                                        <span className="absolute -top-2 -left-3 text-xs text-primary">$</span>
-                                        {total.toFixed(2)}
+                                <div className="flex justify-between items-center text-xs font-black tracking-wider uppercase text-neutral-900 mb-6 bg-gradient-to-r from-neutral-100 to-neutral-50 p-4 border-4 border-neutral-900 relative overflow-hidden">
+                                    <span>TOTAL DUE</span>
+                                    <span className="text-3xl font-mono font-black text-neutral-900 relative">
+                                        ${total.toFixed(2)}
                                     </span>
                                 </div>
 
-                                <Link href="/checkout" className="btn-tactile group/checkout relative block w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-center text-xs font-black tracking-[0.3em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[8px_8px_0_#ff4500] hover:border-primary overflow-hidden">
+                                <Link 
+                                    href="/checkout" 
+                                    onClick={() => playUplinkChirp()}
+                                    onMouseEnter={() => playHoverTick()}
+                                    className="btn-tactile group/checkout relative block w-full bg-primary border-4 border-neutral-900 text-neutral-900 py-4 text-center text-xs font-black tracking-[0.3em] uppercase shadow-[4px_4px_0_#171717] hover:shadow-[8px_8px_0_#ff4500] hover:border-primary overflow-hidden"
+                                >
                                     <span className="relative z-10 flex items-center justify-center gap-2">
                                         Proceed to Checkout
                                         <span className="material-symbols-outlined text-base transition-transform group-hover/checkout:translate-x-2">arrow_forward</span>

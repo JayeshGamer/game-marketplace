@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { playMechanicalClick, playHoverTick, playUplinkChirp } from "@/lib/sound";
 
 export default function Checkout() {
     const { cartItems, clearCart, loading: cartLoading } = useCart();
@@ -33,6 +34,7 @@ export default function Checkout() {
             return;
         }
 
+        playUplinkChirp();
         setIsProcessing(true);
 
         try {
@@ -105,18 +107,18 @@ export default function Checkout() {
 
     if (cartLoading || authLoading) {
         return (
-            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#f4f4f5] flex items-center justify-center p-6 font-display">
                 <div className="bg-white border-4 border-neutral-900 p-8 md:p-12 shadow-[10px_10px_0_#ff4500] max-w-md w-full">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-neutral-900">
                         <div className="w-3 h-3 bg-primary animate-ping" />
-                        <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-neutral-900">INITIALIZING SECURE PROTOCOL</span>
+                        <span className="text-xs font-mono font-black tracking-wider uppercase text-neutral-900">PREPARING SECURE CHECKOUT</span>
                     </div>
                     <div className="space-y-4">
                         <div className="h-8 bg-neutral-200 animate-pulse border-2 border-neutral-900" />
                         <div className="h-12 bg-neutral-100 animate-pulse border-2 border-neutral-300" />
-                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
-                            <span>ESTABLISHING ENCRYPTED UPLINK...</span>
-                            <span className="text-primary font-black animate-pulse">256-BIT</span>
+                        <div className="pt-4 flex items-center justify-between border-t border-neutral-200 text-xs font-mono text-neutral-500 uppercase tracking-wider">
+                            <span>VERIFYING ORDER TOTALS...</span>
+                            <span className="text-primary font-black animate-pulse">SECURE</span>
                         </div>
                     </div>
                 </div>
@@ -131,12 +133,12 @@ export default function Checkout() {
                     <div className="w-16 h-16 bg-neutral-900 border-2 border-neutral-900 flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0_#ff4500]">
                         <span className="material-symbols-outlined text-3xl text-primary">lock</span>
                     </div>
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-3">Authentication Required</h2>
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-neutral-900 mb-3">Sign In Required</h2>
                     <p className="text-neutral-500 font-bold tracking-[0.15em] uppercase text-xs mb-8 leading-relaxed">
-                        You must authenticate your operator identity before initiating financial execution.
+                        Please sign in to your GameVault account to complete your game purchase.
                     </p>
                     <button onClick={() => router.push("/login")} className="btn-tactile w-full bg-primary border-4 border-neutral-900 text-neutral-900 px-8 py-4 font-black tracking-[0.2em] uppercase text-xs shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#171717]">
-                        Login to Continue
+                        Sign In to Continue
                     </button>
                 </div>
             </div>
@@ -144,13 +146,15 @@ export default function Checkout() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-40 px-12 pb-24 font-display max-w-6xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase mb-12 border-b-4 border-neutral-900 pb-6 inline-block">Finalize Sequence</h1>
+        <div className="min-h-screen bg-[#f4f4f5] text-neutral-900 pt-36 px-6 md:px-12 pb-24 font-display max-w-6xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight uppercase mb-10 border-b-4 border-neutral-900 pb-4 inline-block">
+                Checkout & Payment
+            </h1>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-4">
 
                 {/* Left: Forms */}
-                <div className="space-y-16">
+                <div className="space-y-12">
                     {error && (
                         <div className="bg-red-50 border-4 border-red-500 p-4">
                             <p className="text-red-600 font-bold text-sm tracking-widest uppercase">{error}</p>
@@ -160,7 +164,7 @@ export default function Checkout() {
                     <section className="bg-white border-4 border-neutral-900 p-8 shadow-[8px_8px_0_#171717]">
                         <div className="flex items-center gap-4 mb-8 pb-4 border-b-4 border-neutral-900 text-neutral-900">
                             <div className="size-10 bg-neutral-900 text-white flex items-center justify-center text-[14px] font-black tracking-widest border-2 border-neutral-900">01</div>
-                            <h2 className="text-2xl font-black tracking-[0.2em] uppercase">Billing Interface</h2>
+                            <h2 className="text-2xl font-black tracking-[0.15em] uppercase">Billing Details</h2>
                         </div>
                         <form id="checkout-form" onSubmit={handleCheckout} className="space-y-6">
                             <div className="grid grid-cols-2 gap-6">
@@ -204,7 +208,11 @@ export default function Checkout() {
 
                 {/* Right: Order Summary */}
                 <div>
-                    <div className="sticky top-32 p-8 border-4 border-neutral-900 bg-neutral-900 text-white shadow-[8px_8px_0_#ff4500]">
+                    <div className="sticky top-32 p-8 border-4 border-neutral-900 bg-neutral-900 text-white shadow-[8px_8px_0_#ff4500] relative">
+                        {/* Corner Crosshairs */}
+                        <span className="absolute top-2 left-3 text-neutral-600 font-mono text-xs pointer-events-none select-none z-10">+</span>
+                        <span className="absolute top-2 right-3 text-neutral-600 font-mono text-xs pointer-events-none select-none z-10">+</span>
+
                         <h2 className="text-xl font-black tracking-[0.2em] uppercase mb-8 text-primary flex items-center justify-between border-b-4 border-white pb-4">
                             Order Summary
                             <span className="text-white font-mono text-3xl">${total.toFixed(2)}</span>
@@ -230,6 +238,8 @@ export default function Checkout() {
                             type="submit"
                             form="checkout-form"
                             disabled={isProcessing || cartItems.length === 0}
+                            onClick={() => playMechanicalClick(850, 0.2)}
+                            onMouseEnter={() => playHoverTick()}
                             className="btn-tactile w-full bg-primary border-4 border-white text-neutral-900 flex items-center justify-center gap-3 py-6 text-[14px] font-black tracking-[0.3em] uppercase shadow-[4px_4px_0_#ffffff] hover:shadow-[8px_8px_0_#ffffff] disabled:opacity-50 disabled:shadow-none"
                         >
                             <span className="material-symbols-outlined text-xl font-black">

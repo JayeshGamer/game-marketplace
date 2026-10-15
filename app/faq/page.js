@@ -2,38 +2,39 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { playMechanicalClick, playHoverTick } from "@/lib/sound";
 
 const faqs = [
     {
-        category: "Account",
+        category: "Account & Profile",
         questions: [
-            { q: "How do I create an account?", a: "Click 'Access Portal' in the navbar and follow the registration process. You'll need a valid email address." },
-            { q: "Can I change my email?", a: "Yes, visit your Profile page and update your account settings." },
-            { q: "How do I reset my password?", a: "Use the 'Forgot Password' link on the login page to receive a reset email." },
+            { q: "How do I create a GameVault account?", a: "Click 'Sign In' in the top navigation bar or visit /register. You can create your free account in under 30 seconds using your email address." },
+            { q: "Can I change my username or email address?", a: "Yes! Navigate to Account Settings from the top right profile menu to update your gamer tag, display name, and email address anytime." },
+            { q: "How do I reset my account password?", a: "Click 'Forgot Password' on the login screen or change your password directly in your Account Settings under the Password & Security tab." },
         ]
     },
     {
-        category: "Purchasing",
+        category: "Purchases, Keys & Payments",
         questions: [
-            { q: "What payment methods do you accept?", a: "We accept major credit cards, PayPal, and select cryptocurrencies." },
-            { q: "Are purchases instant?", a: "Yes! Games are added to your library immediately after purchase." },
-            { q: "Can I get a refund?", a: "Refunds are available within 14 days if you've played less than 2 hours. See our refund policy." },
+            { q: "What payment methods do you accept?", a: "We accept Visa, Mastercard, American Express, PayPal, Apple Pay, and Google Pay with zero hidden processing fees." },
+            { q: "Are game purchases delivered instantly?", a: "Yes! The moment your checkout completes, your game license is automatically added to your GameVault Library and is ready to download immediately." },
+            { q: "What is your refund policy?", a: "You can request a full, no-questions-asked refund within 14 days of purchase, provided you have played less than 2 hours of the game." },
         ]
     },
     {
-        category: "Games & Library",
+        category: "Game Library & Downloads",
         questions: [
-            { q: "Where are my purchased games?", a: "Visit your Profile page and click the Library tab to see all your games." },
-            { q: "Can I download games offline?", a: "Yes, downloaded games can be played without an internet connection." },
-            { q: "How many devices can I use?", a: "Your account can be used on up to 5 devices simultaneously." },
+            { q: "Where can I find and download my games?", a: "Click 'My Library' in the top navbar or visit your Profile page. Every game you own is saved there forever with direct download links." },
+            { q: "Can I play my games offline?", a: "Yes! All games available on GameVault are 100% DRM-free. Once downloaded and installed, you can play completely offline without an internet connection." },
+            { q: "How many computers can I install my games on?", a: "You can download and install your purchased games on up to 5 personal devices." },
         ]
     },
     {
-        category: "Technical",
+        category: "System Requirements & Support",
         questions: [
-            { q: "System requirements?", a: "Each game page lists specific requirements. Generally, Windows 10+ or macOS 12+ required." },
-            { q: "Game won't launch?", a: "Try verifying game files, updating drivers, or contact support for assistance." },
-            { q: "How do I report a bug?", a: "Use the Contact page to report any technical issues with detailed information." },
+            { q: "How do I check if my PC can run a game?", a: "Every game's store page features a detailed System Requirements card showing minimum and recommended processor, memory, and graphics card specs." },
+            { q: "What if a game won't launch or crashes?", a: "First check that your graphics drivers are up to date and your PC meets the minimum specs. If the issue persists, contact our 24/7 Player Support." },
+            { q: "How do I contact customer support?", a: "Visit our Contact Support page to send a message. Our team operates 24/7 and responds to all inquiries within 24 hours." },
         ]
     }
 ];
@@ -52,32 +53,49 @@ export default function FAQPage() {
     })).filter(section => section.questions.length > 0);
 
     return (
-        <div className="min-h-screen bg-[#f4f4f5] pt-32 pb-20 px-6 font-display">
+        <div className="min-h-screen bg-[#f4f4f5] pt-36 pb-20 px-4 sm:px-6 md:px-12 font-display">
             <div className="max-w-4xl mx-auto">
                 
                 {/* Header */}
-                <div className="mb-12" style={{ animation: 'slideDown 0.6s ease-out' }}>
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-1.5 h-12 bg-primary"></div>
-                        <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight">FAQ</h1>
+                <div className="mb-10 border-b-4 border-neutral-900 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="w-2.5 h-10 bg-primary inline-block"></span>
+                            <span className="text-xs font-mono font-black tracking-widest uppercase text-neutral-500">
+                                HELP CENTER & STORE GUIDE
+                            </span>
+                        </div>
+                        <h1 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight text-neutral-900">
+                            Frequently Asked Questions
+                        </h1>
                     </div>
-                    <p className="text-neutral-600 text-sm font-bold tracking-wider uppercase ml-6">Frequently Asked Questions & Protocol Guidelines</p>
+                    <div className="flex items-center gap-2 py-1.5 px-3 bg-neutral-900 text-primary border-2 border-neutral-900 font-mono text-xs shadow-[2px_2px_0_#ff4500]">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span className="text-white font-bold">ALL GUIDES UPDATED</span>
+                    </div>
                 </div>
 
                 {/* Search Box */}
-                <div className="mb-8 bg-white border-4 border-neutral-900 p-1 shadow-[4px_4px_0_#171717] focus-within:shadow-[6px_6px_0_#ff4500] transition-shadow">
+                <div className="mb-10 bg-white border-4 border-neutral-900 p-2 shadow-[6px_6px_0_#171717] focus-within:shadow-[8px_8px_0_#ff4500] transition-shadow relative">
+                    <span className="absolute top-1 left-2 text-neutral-400 font-mono text-xs pointer-events-none select-none">+</span>
                     <div className="flex items-center gap-3 px-4 py-3">
-                        <span className="material-symbols-outlined text-neutral-400">search</span>
+                        <span className="material-symbols-outlined text-neutral-500 text-2xl">search</span>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="SEARCH QUESTIONS, KEYWORDS, OR POLICIES..."
-                            className="flex-1 bg-transparent text-sm font-mono font-bold tracking-wider uppercase outline-none placeholder:text-neutral-400"
+                            placeholder="Search questions, refunds, DRM-free downloads, account..."
+                            className="flex-1 bg-transparent text-sm font-medium text-neutral-900 outline-none placeholder:text-neutral-400"
                         />
                         {searchQuery && (
-                            <button onClick={() => setSearchQuery("")} className="btn-tactile text-neutral-400 hover:text-primary">
-                                <span className="material-symbols-outlined text-sm">close</span>
+                            <button 
+                                onClick={() => {
+                                    playMechanicalClick(650, 0.15);
+                                    setSearchQuery("");
+                                }} 
+                                className="btn-tactile text-neutral-400 hover:text-primary"
+                            >
+                                <span className="material-symbols-outlined text-base">close</span>
                             </button>
                         )}
                     </div>
@@ -87,40 +105,62 @@ export default function FAQPage() {
                 <div className="space-y-8">
                     {filteredFaqs.length === 0 ? (
                         <div className="bg-white border-4 border-neutral-900 p-12 text-center shadow-[6px_6px_0_#171717]">
-                            <p className="text-sm font-black uppercase text-neutral-500 tracking-wider">No matching queries found in database.</p>
-                            <button onClick={() => setSearchQuery("")} className="btn-tactile mt-4 bg-primary border-2 border-neutral-900 px-4 py-2 text-xs font-black uppercase shadow-[2px_2px_0_#171717]">
-                                Reset Query
+                            <p className="text-sm font-bold uppercase text-neutral-600 tracking-wider mb-4">
+                                No questions found matching your search.
+                            </p>
+                            <button 
+                                onClick={() => {
+                                    playMechanicalClick(650, 0.15);
+                                    setSearchQuery("");
+                                }} 
+                                className="btn-tactile bg-primary border-2 border-neutral-900 px-6 py-2.5 text-xs font-black uppercase shadow-[3px_3px_0_#171717]"
+                            >
+                                Clear Search
                             </button>
                         </div>
                     ) : (
                         filteredFaqs.map((section, sIdx) => (
-                            <div key={sIdx} className="bg-white border-4 border-neutral-900 shadow-[6px_6px_0_#171717]">
-                                <div className="bg-neutral-900 text-white px-6 py-3 border-b-4 border-neutral-900">
-                                    <h2 className="text-base font-black uppercase tracking-wider flex items-center gap-2">
-                                        <div className="w-1.5 h-4 bg-primary"></div>
+                            <div key={sIdx} className="space-y-4">
+                                <div className="flex items-center gap-3 border-b-2 border-neutral-900 pb-2">
+                                    <div className="w-2 h-2 bg-primary"></div>
+                                    <h2 className="text-base font-display font-black tracking-wider uppercase text-neutral-900">
                                         {section.category}
                                     </h2>
                                 </div>
-                                <div className="divide-y-2 divide-neutral-900">
-                                    {section.questions.map((item, qIdx) => {
-                                        const index = `${sIdx}-${qIdx}`;
-                                        const isOpen = activeIndex === index;
+
+                                <div className="space-y-3">
+                                    {section.questions.map((faq, qIdx) => {
+                                        const id = `${sIdx}-${qIdx}`;
+                                        const isOpen = activeIndex === id;
+
                                         return (
-                                            <div key={qIdx}>
+                                            <div 
+                                                key={qIdx}
+                                                className="bg-white border-4 border-neutral-900 shadow-[4px_4px_0_#171717] hover:shadow-[6px_6px_0_#ff4500] transition-all relative overflow-hidden"
+                                            >
                                                 <button
-                                                    onClick={() => setActiveIndex(isOpen ? null : index)}
-                                                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-neutral-50 active:bg-neutral-100 transition-colors group text-left"
+                                                    onClick={() => {
+                                                        playMechanicalClick();
+                                                        setActiveIndex(isOpen ? null : id);
+                                                    }}
+                                                    onMouseEnter={() => playHoverTick()}
+                                                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-display"
                                                 >
-                                                    <span className="text-sm font-black uppercase tracking-tight text-neutral-900 group-hover:text-primary transition-colors pr-4">
-                                                        {item.q}
+                                                    <span className="text-sm md:text-base font-bold text-neutral-900">
+                                                        {faq.q}
                                                     </span>
-                                                    <span className={`material-symbols-outlined text-primary transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
-                                                        expand_more
-                                                    </span>
+                                                    <div className={`w-8 h-8 flex items-center justify-center border-2 border-neutral-900 shrink-0 transition-transform ${
+                                                        isOpen ? 'bg-primary rotate-180' : 'bg-neutral-100'
+                                                    }`}>
+                                                        <span className="material-symbols-outlined text-lg">
+                                                            expand_more
+                                                        </span>
+                                                    </div>
                                                 </button>
+
                                                 {isOpen && (
-                                                    <div className="px-6 pb-5 text-sm text-neutral-700 leading-relaxed border-t-2 border-neutral-200 pt-4 bg-neutral-50/50">
-                                                        {item.a}
+                                                    <div className="px-5 pb-5 pt-1 border-t-2 border-neutral-200 text-sm font-medium text-neutral-700 leading-relaxed bg-neutral-50/50">
+                                                        <p>{faq.a}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -132,15 +172,26 @@ export default function FAQPage() {
                     )}
                 </div>
 
-                {/* Contact CTA */}
-                <div className="mt-12 bg-primary border-4 border-neutral-900 p-8 shadow-[8px_8px_0_#171717] text-center">
-                    <span className="material-symbols-outlined text-5xl text-neutral-900 mb-4 block">support_agent</span>
-                    <h3 className="text-2xl font-black uppercase tracking-wider text-neutral-900 mb-2">Still Need Help?</h3>
-                    <p className="text-sm font-bold text-neutral-900/80 mb-6">Our support team is available 24/7 across all global sectors</p>
-                    <Link href="/contact" className="btn-tactile inline-block bg-neutral-900 text-white border-4 border-neutral-900 px-8 py-3.5 font-black tracking-wider uppercase text-sm shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000] hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
-                        Contact Support
+                {/* Still Need Help Footer Banner */}
+                <div className="mt-12 bg-neutral-900 text-white p-8 border-4 border-neutral-900 shadow-[8px_8px_0_#ff4500] flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div>
+                        <h3 className="text-2xl font-display font-black uppercase tracking-tight text-white mb-1">
+                            Still have questions?
+                        </h3>
+                        <p className="text-xs text-neutral-400 font-medium">
+                            Our gamer support team is here 24/7 to help you with purchases, installs, and game keys.
+                        </p>
+                    </div>
+                    <Link
+                        href="/contact"
+                        onClick={() => playMechanicalClick()}
+                        onMouseEnter={() => playHoverTick()}
+                        className="btn-tactile bg-primary text-neutral-900 border-2 border-neutral-900 px-6 py-3 font-display font-black text-xs uppercase tracking-wider shadow-[3px_3px_0_#fff] hover:shadow-[5px_5px_0_#fff] shrink-0"
+                    >
+                        Contact Player Support
                     </Link>
                 </div>
+
             </div>
         </div>
     );
